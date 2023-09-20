@@ -13,7 +13,10 @@
                 "strategy": "set"
             },
             "toolchainFile": "${sourceDir}/dependencies/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            "binaryDir": "${sourceDir}/build_win64"
+            "binaryDir": "${sourceDir}/build_win64",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            }
         }
     ]
   }
