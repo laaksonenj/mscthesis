@@ -4,5 +4,11 @@
     "dependencies": [
         "gmp",
         "eigen3"
-    ]
+    ],
+    "features": {
+        "tests": {
+            "description": "Build tests",
+            "dependencies": ["gtest"]
+        }
+    }
 }
