@@ -532,19 +532,150 @@ oltava sama kuin lomakkeessa oleva teksti.
 %% Leave page number of the first page empty
 %% 
 \thispagestyle{empty}
+A partial differential equation (PDE) is an equation that consists of an
+unknown function of two or more variables and its partial derivatives of
+arbitrary order \cite{evans2010}.
+Such equations describe how a function, possibly corresponding to a physical
+quantity of interest, behaves over its domain of definition
+which in practical applications typically corresponds to a geometric shape or
+time or both. For example, many fundamental laws of physics can be elegantly
+expressed as partial differential equations, e.g.\ Maxwell's equations
+in electromagnetism.
+The set of all possible partial differential equations is incredibly vast and
+complex, which makes it unwieldy, and most probably impossible,
+to come up with a general PDE theory that could be productively used for any kind
+of problem. Instead, the study of partial differential equations
+focuses on important families and instances of PDEs arising from
+different fields of science. For example, Poisson's 
+equation belongs to the family of elliptic partial differential equations.
 
+A solution of a partial differential equation is said to be classical if it
+can be differentiated at least as many times as the formulation of the PDE
+requires and the PDE holds pointwise everywhere in its domain.
+Now one may wonder how and why a solution should be characterized in
+any other way, but it turns out that rather few partial differential equations
+have classical solutions. Moreover, imposing boundary conditions,
+that the possible classical solution must satisfy on the boundary of its domain,
+complicates the question of existence even further.
+For some phenomena the solution may even be expected to be non-differentiable
+at some points, so it makes sense to look for solutions in some other sense as well
+than just classical sense. Thus, the initial partial differential equation is
+usually reformulated in a more generalized form, which essentially expands
+the space of functions where the solution is searched and enables a set of useful
+mathematical techniques to be utilized. A solution of the
+generalized problem is usually called a generalized solution or a weak solution,
+and its existence can be guaranteed for a large set of problems.
+Whether a weak solution is also a classical solution can then be
+assessed separately, and such results fall under the subdiscipline of
+regularity theory of PDEs.
 
+In practical applications numerical methods are used to approximate the
+solutions of partial differential equations. One such method that has been
+extremely successful is the finite element method (FEM). Oden \cite{oden1991}
+provides a review of its history. Without too stringent a viewpoint, some attributes 
+of the finite element method can be traced back a couple of centuries, but serious
+interest in the method started to accumulate during the mid-1950s and 1960s
+especially in the engineering community. During this time the finite element method 
+also gained its name. The mathematical foundations were established somewhat
+later during the 1970s, and the convergence of the method was assessed for several
+classes of problems.
+
+Oden also discusses some of the factors leading to the success of the finite
+element method. The method is based on the generalized, weak formulation of a
+partial differential equation which will be discussed in more
+detail in later sections, but for now it suffices to say that it is a crucial
+factor why the finite element method merits its success. Being based on the weak
+formulation, the finite element method is essentially geometry-agnostic, which
+means that it can be used to solve partial differential equations over almost any
+kind of shape. Combined with the rich modern theory of partial differential
+equations, the finite element method has solid mathematical foundations which offer
+optimal estimates of the convergence of the approximations. 
+From a computational standpoint, the implementation of the method in 
+computer code lends itself extremely well to parallelization.
+
+Decision-making based on computed information requires that the computed
+information is reliable. Szabó and Babu{\v s}ka \cite{szabobabuska2011}
+discuss this systematically in the context of finite element analysis, i.e.\
+the process of using the finite element method to solve a problem. In finite
+element analysis the typical workflow is to create a mathematical model, i.e.\ a set 
+of partial differential equations and constraints,
+that represents the physical system of interest,
+find an approximate solution to the model by using the finite element method,
+and finally extract the desired computed information from the approximate solution.
+There are two critical factors contributing to the reliability of such computed 
+information: the suitability of the mathematical model as a representation of
+idealized reality and the accuracy of the approximated solution with respect
+to the exact solution of the mathematical model.
+Szabó and Babu{\v s}ka call the processes of assessing these qualities validation 
+and verification, respectively.
+The validation process may consist of, for example, comparing the results of
+real-life experiments to predictions obtained from the mathematical model.
+The verification process leans on the well-understood approximation
+properties of the finite element method for many practical problems.
+
+Sometimes a physical phenomenon may be modeled sufficiently well by a 
+mathematical model for which the approximation results from the standard
+theory of the finite element method do not apply, at least directly.
+If possible, one option to still be able to perform the verification process would 
+be to change the model so that the error estimates readily apply.
+However, there could be some tradeoffs involved in the choice between the models,
+which could still make the initial model more favorable,
+e.g.\ the initial model is a crude simplification but requires much less
+effort to solve. For example, Babu{\v s}ka et al.\ \cite{babuskasoanesuri2017}
+study the effects of replacing holes having extremely small radii with singular
+points, i.e.\ holes with radii zero, which simplifies the approximation process
+but essentially renders the model as incorrect but still useful.
+
+In this thesis we study a problem similar in vein to the previous paragraph
+in the sense that convergence of the finite element method is not obvious.
+The problem is Poisson's equation with Dirac delta source term, and it can
+be expressed as finding a function $u$ such that
+\begin{equation*}
+    -\Delta u = \delta_{x_0},
+\end{equation*}
+where $\Delta u$ is the Laplacian of $u$,
+i.e.\ the sum of second partial derivatives of $u$ with respect to each independent
+variable, and $\delta_{x_0}$ is the Dirac delta distribution which can be thought
+of as a measure that evaluates a given function at the point $x_0$ when integrated
+against. The presence of the Dirac delta means that the equality above is to be
+understood in some specific sense, namely in the weak sense,
+which will be made precise in later sections. Poisson's equation can be used to
+model, for example, the electrostatic potential caused by an electric charge, and
+with the Dirac delta source term the equation can be thought to model an idealized
+point charge, i.e.\ a charge with no volume.
+
+We study the above problem in convex polygonal two dimensional domains
+and with different boundary conditions, namely
+Dirichlet, Neumann and mixed Dirichlet-Neumann boundary conditions.
+The first objective of this thesis is to study the unique solvability of these
+problems. Casas \cite{casas1985} proves this for the Dirichlet problem with
+homogeneous boundary values. We extend this result to the other boundary 
+conditions as well with non-homogeneous values.
+The second objective is to study the convergence
+of the finite element method in specific norms when applied to these problems.
+We shall consider the h- and p-versions of the finite element method which will
+be presented later. Casas \cite{casas1985} and Scott \cite{scott1973}
+show convergence for the h-version in $L^2$ integral norm.
+Schatz and Wahlbin \cite{schatzwahlbin1977} also prove estimates for pointwise
+convergence for the h-version. We extend the result of $L^2$ convergence
+by Casas to the p-version. We also assess the convergence numerically
+for a Neumann problem with emphasis on pointwise convergence which sometimes
+turns out to be exponential. Finally, the Dirac delta distribution is replaced
+by its derivative in which case the convergence of the finite element method is     
+studied numerically. The Dirac delta distribution and its derivative are jointly
+referred to as concentrated loads when used as the source terms in Poisson's 
+equation. More recent results have been obtained by Millar et al.\
+\cite{millarmuga2021} who obtain convergence by approximating the
+Dirac delta function and by Araya et al.\ \cite{arayabehrens2006} who deduce
+a posteriori error estimates.
+
+The remainder of this thesis is structured as follows.
 
 \clearpage
 %% Bibliography/ list of references
 %%
 \thesisbibliography
-
-\begin{thebibliography}{99}
-
-\bibitem{tex}
-\TeX{}
-
-\end{thebibliography}
+\bibliographystyle{ieeetr}
+\bibliography{refs}
 
 \end{document}
