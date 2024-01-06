@@ -1,4 +1,4 @@
-include(GMP)
+find_package(GMP REQUIRED GLOBAL)
 find_package(Eigen3 CONFIG REQUIRED GLOBAL)
 
 if (BUILD_TESTING)
