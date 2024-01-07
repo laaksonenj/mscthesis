@@ -2,8 +2,13 @@ cmake_minimum_required(VERSION 3.24)
 
 project(dirac_solver)
 
+option(ENABLE_RUNTIME_ASSERTS "" ON)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
+if(ENABLE_RUNTIME_ASSERTS)
+    include(EnableAsserts)
+endif()
 include(CTest)
 include(UtUtils)
 
