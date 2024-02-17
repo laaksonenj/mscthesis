@@ -1,0 +1,12 @@
+add_unit_test(fem_math_polynomial_test
+    SOURCES
+        Monomial1DTest.cpp
+        Monomial2DTest.cpp
+        Polynomial1DTest.cpp
+        Polynomial2DTest.cpp
+        PolynomialCalculusTest.cpp
+        PolynomialCompositionTest.cpp
+        PolynomialStringUtilsTest.cpp
+    LIBRARIES
+        fem_math_polynomial_lib
+)

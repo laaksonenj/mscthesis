@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(dirac_solver)
+project(mscthesis)
 
 option(ENABLE_RUNTIME_ASSERTS "" ON)
 
