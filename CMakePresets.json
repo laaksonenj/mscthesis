@@ -16,17 +16,7 @@
             "binaryDir": "${sourceDir}/build_win64",
             "cacheVariables": {
                 "VCPKG_INSTALLED_DIR": "${sourceDir}/dependencies/vcpkg_installed",
-                "VCPKG_TARGET_TRIPLET": "x64-windows",
-                "VCPKG_MANIFEST_FEATURES": "tests"
-            }
-        },
-        {
-            "name": "win64_no_tests",
-            "inherits": "win64",
-            "binaryDir": "${sourceDir}/build_win64_no_tests",
-            "cacheVariables": {
-                "BUILD_TESTING": false,
-                "VCPKG_MANIFEST_FEATURES": null
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
             }
         }
     ]

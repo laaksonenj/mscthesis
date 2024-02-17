@@ -2,13 +2,12 @@
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
     "builtin-baseline": "4cfabe769eaceb209ea37267e8c50c43b86a4a7b",
     "dependencies": [
+        "boost-algorithm",
+        "boost-functional",
+        "boost-program-options",
+        "eigen3",
         "gmp",
-        "eigen3"
-    ],
-    "features": {
-        "tests": {
-            "description": "Build tests",
-            "dependencies": ["gtest"]
-        }
-    }
+        "gsl",
+        "gtest"
+    ]
 }
