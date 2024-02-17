@@ -1,1 +1,1 @@
-add_executable(fem Main.cpp)
+add_subdirectory(fem)
