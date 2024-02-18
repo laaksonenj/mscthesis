@@ -1,3 +1,4 @@
+add_subdirectory(assembly)
 add_subdirectory(basis)
 add_subdirectory(domain)
 add_subdirectory(math)
