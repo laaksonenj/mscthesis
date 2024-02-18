@@ -1,5 +1,7 @@
 #include "fem/assembly/StiffnessMatrix.hpp"
 
+#include "fem/basis/BasisFunctionIndexer.hpp"
+
 namespace fem
 {
 MatrixXmpq assembleStiffnessMatrix(const Mesh& mesh, uint32_t p, PolynomialSpaceType polynomialSpaceType, const ShapeFunctionFactory& shapeFunctionFactory)

@@ -22,3 +22,14 @@ target_link_libraries(generate_stiffness_matrix_header
         apps_refdata_utils_lib
         fem_assembly_lib
 )
+
+add_executable(generate_dirac_load_header
+    GenerateDiracLoadHeaderMain.cpp
+)
+
+target_link_libraries(generate_dirac_load_header
+    PRIVATE
+        apps_common_lib
+        apps_refdata_utils_lib
+        fem_assembly_lib
+)

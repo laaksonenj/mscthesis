@@ -12,4 +12,5 @@ target_link_libraries(apps_common_lib
         Boost::program_options
     PRIVATE
         fem_basis_lib
+        fem_multiprecision_lib
 )

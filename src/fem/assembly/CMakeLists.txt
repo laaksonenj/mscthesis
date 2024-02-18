@@ -1,4 +1,5 @@
 add_library(fem_assembly_lib STATIC
+    DiracLoadVector.cpp
     StiffnessMatrix.cpp
 )
 

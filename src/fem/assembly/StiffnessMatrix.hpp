@@ -2,7 +2,6 @@
 
 #include <cstdint>
 
-#include "fem/basis/BasisFunctionIndexer.hpp"
 #include "fem/basis/PolynomialSpaceType.hpp"
 #include "fem/basis/ShapeFunctionFactory.hpp"
 #include "fem/domain/Mesh.hpp"

@@ -1,0 +1,5 @@
+--mesh-file mesh.txt
+--p 3
+--polynomial-space trunk
+--dirac-point 1 5/2
+--variable-name refDiracLoadVector3

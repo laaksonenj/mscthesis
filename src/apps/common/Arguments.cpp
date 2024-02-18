@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "fem/basis/PolynomialSpaceType.hpp"
+#include "fem/multiprecision/Types.hpp"
 
 namespace fem
 {
@@ -15,9 +16,10 @@ Arguments::Arguments(int argc, char* argv[])
         ("p", po::value<int>(), "")
         ("polynomial-space", po::value<std::string>())
         ("variable-name", po::value<std::string>())
+        ("dirac-point", po::value<std::vector<std::string>>()->multitoken())
         ;
 
-    po::store(po::parse_command_line(argc, argv, m_desc), m_vm);
+    po::store(po::parse_command_line(argc, argv, m_desc, po::command_line_style::unix_style ^ po::command_line_style::allow_short), m_vm);
     po::notify(m_vm);
 
     m_optionParsers.emplace("mesh-file", [](const po::variables_map& vm)
@@ -90,6 +92,26 @@ Arguments::Arguments(int argc, char* argv[])
         else
         {
             std::cout << "Argument missing: --variable-name" << std::endl;
+            return std::any();
+        }
+    });
+
+    m_optionParsers.emplace("dirac-point", [](const po::variables_map& vm)
+    {
+        if (vm.count("dirac-point"))
+        {
+            const std::vector<std::string> coords = vm["dirac-point"].as<std::vector<std::string>>();
+            if (coords.size() != 2)
+            {
+                std::cout << "Dirac point must contain two coordinate values" << std::endl;
+                return std::any();
+            }
+            const Vector2mpq x_0{mpq_class(coords[0]), mpq_class(coords[1])};
+            return std::any(x_0);
+        }
+        else
+        {
+            std::cout << "Argument missing: --dirac-point" << std::endl;
             return std::any();
         }
     });
