@@ -1,19 +1,17 @@
 #include "fem/assembly/StiffnessMatrix.hpp"
 
-#include "fem/basis/BasisFunctionIndexer.hpp"
-
 namespace fem
 {
-MatrixXmpq assembleStiffnessMatrix(const Mesh& mesh, uint32_t p, PolynomialSpaceType polynomialSpaceType, const ShapeFunctionFactory& shapeFunctionFactory)
+MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer, const ShapeFunctionFactory& shapeFunctionFactory)
 {
-    return assembleStiffnessMatrix(mesh, p, polynomialSpaceType);
+    return assembleStiffnessMatrix(basisFunctionIndexer);
 }
 
-MatrixXmpq assembleStiffnessMatrix(const Mesh& mesh, uint32_t p, PolynomialSpaceType polynomialSpaceType)
+MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer)
 {
-    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
     const uint32_t numOfBasisFunctions = basisFunctionIndexer.getNumOfBasisFunctions();
     MatrixXmpq res(numOfBasisFunctions, numOfBasisFunctions);
+    const Mesh& mesh = basisFunctionIndexer.getMesh();
     for (int elementIdx = 0; elementIdx < mesh.getNumOfElements(); elementIdx++)
     {
         const Element& element = mesh.getElement(elementIdx);

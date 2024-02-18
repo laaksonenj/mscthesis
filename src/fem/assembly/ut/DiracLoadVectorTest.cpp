@@ -14,9 +14,10 @@ TEST(DiracLoadVectorTest, DiracLoadVector1)
     const uint32_t p = 4;
     const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
     const Vector2mpq x_0{1, 2};
+    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
     const ShapeFunctionFactory shapeFunctionFactory;
-    EXPECT_EQ(assembleDiracLoadVector(mesh, p, polynomialSpaceType, x_0), refdata::refDiracLoadVector1);
-    EXPECT_EQ(assembleDiracLoadVector(mesh, p, polynomialSpaceType, x_0, shapeFunctionFactory), refdata::refDiracLoadVector1);
+    EXPECT_EQ(assembleDiracLoadVector(basisFunctionIndexer, x_0), refdata::refDiracLoadVector1);
+    EXPECT_EQ(assembleDiracLoadVector(basisFunctionIndexer, x_0, shapeFunctionFactory), refdata::refDiracLoadVector1);
 }
 
 TEST(DiracLoadVectorTest, DiracLoadVector2)
@@ -26,9 +27,10 @@ TEST(DiracLoadVectorTest, DiracLoadVector2)
     const uint32_t p = 4;
     const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Product;
     const Vector2mpq x_0{mpq_class("3/2"), mpq_class("5/2")};
+    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
     const ShapeFunctionFactory shapeFunctionFactory;
-    EXPECT_EQ(assembleDiracLoadVector(mesh, p, polynomialSpaceType, x_0), refdata::refDiracLoadVector2);
-    EXPECT_EQ(assembleDiracLoadVector(mesh, p, polynomialSpaceType, x_0, shapeFunctionFactory), refdata::refDiracLoadVector2);
+    EXPECT_EQ(assembleDiracLoadVector(basisFunctionIndexer, x_0), refdata::refDiracLoadVector2);
+    EXPECT_EQ(assembleDiracLoadVector(basisFunctionIndexer, x_0, shapeFunctionFactory), refdata::refDiracLoadVector2);
 }
 
 TEST(DiracLoadVectorTest, DiracLoadVector3)
@@ -38,8 +40,9 @@ TEST(DiracLoadVectorTest, DiracLoadVector3)
     const uint32_t p = 3;
     const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
     const Vector2mpq x_0{mpq_class(1), mpq_class("5/2")};
+    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
     const ShapeFunctionFactory shapeFunctionFactory;
-    EXPECT_EQ(assembleDiracLoadVector(mesh, p, polynomialSpaceType, x_0), refdata::refDiracLoadVector3);
-    EXPECT_EQ(assembleDiracLoadVector(mesh, p, polynomialSpaceType, x_0, shapeFunctionFactory), refdata::refDiracLoadVector3);
+    EXPECT_EQ(assembleDiracLoadVector(basisFunctionIndexer, x_0), refdata::refDiracLoadVector3);
+    EXPECT_EQ(assembleDiracLoadVector(basisFunctionIndexer, x_0, shapeFunctionFactory), refdata::refDiracLoadVector3);
 }
 } // namespace fem::ut

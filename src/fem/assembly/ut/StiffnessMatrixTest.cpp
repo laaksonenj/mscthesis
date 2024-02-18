@@ -13,9 +13,10 @@ TEST(StiffnessMatrixTest, StiffnessMatrix1)
     const Mesh mesh = createMeshFromFile(meshFilename);
     const uint32_t p = 4;
     const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
+    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
     const ShapeFunctionFactory shapeFunctionFactory;
-    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType), refdata::refStiffnessMatrix1);
-    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType, shapeFunctionFactory), refdata::refStiffnessMatrix1);
+    EXPECT_EQ(assembleStiffnessMatrix(basisFunctionIndexer), refdata::refStiffnessMatrix1);
+    EXPECT_EQ(assembleStiffnessMatrix(basisFunctionIndexer, shapeFunctionFactory), refdata::refStiffnessMatrix1);
 }
 
 TEST(StiffnessMatrixTest, StiffnessMatrix2)
@@ -24,9 +25,10 @@ TEST(StiffnessMatrixTest, StiffnessMatrix2)
     const Mesh mesh = createMeshFromFile(meshFilename);
     const uint32_t p = 4;
     const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Product;
+    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
     const ShapeFunctionFactory shapeFunctionFactory;
-    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType), refdata::refStiffnessMatrix2);
-    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType, shapeFunctionFactory), refdata::refStiffnessMatrix2);
+    EXPECT_EQ(assembleStiffnessMatrix(basisFunctionIndexer), refdata::refStiffnessMatrix2);
+    EXPECT_EQ(assembleStiffnessMatrix(basisFunctionIndexer, shapeFunctionFactory), refdata::refStiffnessMatrix2);
 }
 
 TEST(StiffnessMatrixTest, StiffnessMatrix3)
@@ -35,8 +37,9 @@ TEST(StiffnessMatrixTest, StiffnessMatrix3)
     const Mesh mesh = createMeshFromFile(meshFilename);
     const uint32_t p = 1;
     const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
+    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
     const ShapeFunctionFactory shapeFunctionFactory;
-    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType), refdata::refStiffnessMatrix3);
-    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType, shapeFunctionFactory), refdata::refStiffnessMatrix3);
+    EXPECT_EQ(assembleStiffnessMatrix(basisFunctionIndexer), refdata::refStiffnessMatrix3);
+    EXPECT_EQ(assembleStiffnessMatrix(basisFunctionIndexer, shapeFunctionFactory), refdata::refStiffnessMatrix3);
 }
 } // namespace fem::ut

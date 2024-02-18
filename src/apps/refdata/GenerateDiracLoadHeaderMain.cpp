@@ -21,7 +21,8 @@ int main(int argc, char* argv[])
     const std::string varName = args.getValue<std::string>("variable-name");
 
     const Mesh mesh = createMeshFromFile(meshFilename);
-    const VectorXmpq diracLoadVector = assembleDiracLoadVector(mesh, p, polynomialSpaceType, x_0);
+    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
+    const VectorXmpq diracLoadVector = assembleDiracLoadVector(basisFunctionIndexer, x_0);
 
     std::stringstream ss;
     ss << generateCommonHeader();

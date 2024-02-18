@@ -1,14 +1,11 @@
 #pragma once
 
-#include <cstdint>
-
-#include "fem/basis/PolynomialSpaceType.hpp"
+#include "fem/basis/BasisFunctionIndexer.hpp"
 #include "fem/basis/ShapeFunctionFactory.hpp"
-#include "fem/domain/Mesh.hpp"
 #include "fem/multiprecision/Types.hpp"
 
 namespace fem
 {
-MatrixXmpq assembleStiffnessMatrix(const Mesh& mesh, uint32_t p, PolynomialSpaceType polynomialSpaceType, const ShapeFunctionFactory& shapeFunctionFactory);
-MatrixXmpq assembleStiffnessMatrix(const Mesh& mesh, uint32_t p, PolynomialSpaceType polynomialSpaceType);
+MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer, const ShapeFunctionFactory& shapeFunctionFactory);
+MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer);
 } // namespace fem

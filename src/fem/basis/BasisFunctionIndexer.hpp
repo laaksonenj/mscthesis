@@ -22,6 +22,7 @@ public:
     uint32_t getBasisFunctionIndex(const BasisFunctionDescriptor& descriptor) const;
     BasisFunctionDescriptor getBasisFunctionDescriptor(Mesh::ElementIndex elementIdx, uint32_t shapeFunctionIdx) const;
     BasisFunctionDescriptor getBasisFunctionDescriptor(uint32_t basisFunctionIndex) const;
+    const Mesh& getMesh() const { return m_mesh; }
 
     /* For testing & reference data generation purposes only */
     Polynomial2D getShapeFunction(Mesh::ElementIndex elementIdx, uint32_t shapeFunctionIdx) const;
