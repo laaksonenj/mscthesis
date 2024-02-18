@@ -1,0 +1,4 @@
+--mesh-file mesh.txt
+--p 1
+--polynomial-space product
+--variable-name refStiffnessMatrix3

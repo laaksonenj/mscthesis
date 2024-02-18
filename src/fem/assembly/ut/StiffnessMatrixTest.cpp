@@ -1,33 +1,42 @@
 #include <gtest/gtest.h>
 
 #include "fem/assembly/StiffnessMatrix.hpp"
+#include "fem/assembly/ut/refdata/stiffness_matrix1/RefStiffnessMatrix1.hpp"
+#include "fem/assembly/ut/refdata/stiffness_matrix2/RefStiffnessMatrix2.hpp"
+#include "fem/assembly/ut/refdata/stiffness_matrix3/RefStiffnessMatrix3.hpp"
 
 namespace fem::ut
 {
-TEST(StiffnessMatrixTest, StiffnessMatrixAssembly)
+TEST(StiffnessMatrixTest, StiffnessMatrix1)
 {
-    const std::vector<Node> nodes{
-        {"1", "0"},
-        {"2", "1"},
-        {"2", "3"},
-        {"0", "3"},
-        {"1", "2"}
-    };
-    const std::vector<std::vector<Mesh::NodeIndex>> elements{
-        {2, 3, 4},
-        {1, 2, 4, 0}
-    };
-    const Mesh mesh(nodes, elements);
-
+    const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/stiffness_matrix1/mesh.txt"};
+    const Mesh mesh = createMeshFromFile(meshFilename);
     const uint32_t p = 4;
-    const MatrixXmpq stiffnessMatrix = assembleStiffnessMatrix(mesh, p, PolynomialSpaceType_Trunk);
-    EXPECT_EQ(stiffnessMatrix.rows(), 27);
-    EXPECT_EQ(stiffnessMatrix.cols(), 27);
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
+    const ShapeFunctionFactory shapeFunctionFactory;
+    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType), refdata::refStiffnessMatrix1);
+    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType, shapeFunctionFactory), refdata::refStiffnessMatrix1);
+}
 
-    /* Edge 2, k=3 vs. node 2 */
-    uint32_t i = 5 + 2*(p-1) + 1;
-    uint32_t j = 2;
-    EXPECT_EQ(stiffnessMatrix(i, j), mpq_class("1/5"));
-    EXPECT_EQ(stiffnessMatrix(j, i), mpq_class("1/5"));
+TEST(StiffnessMatrixTest, StiffnessMatrix2)
+{
+    const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/stiffness_matrix2/mesh.txt"};
+    const Mesh mesh = createMeshFromFile(meshFilename);
+    const uint32_t p = 4;
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Product;
+    const ShapeFunctionFactory shapeFunctionFactory;
+    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType), refdata::refStiffnessMatrix2);
+    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType, shapeFunctionFactory), refdata::refStiffnessMatrix2);
+}
+
+TEST(StiffnessMatrixTest, StiffnessMatrix3)
+{
+    const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/stiffness_matrix3/mesh.txt"};
+    const Mesh mesh = createMeshFromFile(meshFilename);
+    const uint32_t p = 1;
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
+    const ShapeFunctionFactory shapeFunctionFactory;
+    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType), refdata::refStiffnessMatrix3);
+    EXPECT_EQ(assembleStiffnessMatrix(mesh, p, polynomialSpaceType, shapeFunctionFactory), refdata::refStiffnessMatrix3);
 }
 } // namespace fem::ut

@@ -1,0 +1,4 @@
+--mesh-file mesh.txt
+--p 4
+--polynomial-space trunk
+--variable-name refStiffnessMatrix1
