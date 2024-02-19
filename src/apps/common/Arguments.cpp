@@ -9,14 +9,21 @@ namespace fem
 {
 namespace po = boost::program_options;
 
+#define ARGUMENT_MISSING(argName) \
+    std::cout << "Argument missing: --" << argName << std::endl; \
+    return std::any();
+
 Arguments::Arguments(int argc, char* argv[])
 {
     m_desc.add_options()
-        ("mesh-file", po::value<std::string>(), "")
-        ("p", po::value<int>(), "")
+        ("mesh-file", po::value<std::string>())
+        ("p", po::value<int>())
         ("polynomial-space", po::value<std::string>())
         ("variable-name", po::value<std::string>())
         ("dirac-point", po::value<std::vector<std::string>>()->multitoken())
+        ("boundary-function-idx", po::value<int>())
+        ("element-idx", po::value<int>())
+        ("local-side-idx", po::value<int>())
         ;
 
     po::store(po::parse_command_line(argc, argv, m_desc, po::command_line_style::unix_style ^ po::command_line_style::allow_short), m_vm);
@@ -30,8 +37,7 @@ Arguments::Arguments(int argc, char* argv[])
         }
         else
         {
-            std::cout << "Argument missing: --mesh-file" << std::endl;
-            return std::any();
+            ARGUMENT_MISSING("mesh-file");
         }
     });
 
@@ -52,8 +58,7 @@ Arguments::Arguments(int argc, char* argv[])
         }
         else
         {
-            std::cout << "Argument missing: --p" << std::endl;
-            return std::any();
+            ARGUMENT_MISSING("p");
         }
     });
 
@@ -78,8 +83,7 @@ Arguments::Arguments(int argc, char* argv[])
         }
         else
         {
-            std::cout << "Argument missing: --polynomial-space" << std::endl;
-            return std::any();
+            ARGUMENT_MISSING("polynomial-space");
         }
     });
 
@@ -91,8 +95,7 @@ Arguments::Arguments(int argc, char* argv[])
         }
         else
         {
-            std::cout << "Argument missing: --variable-name" << std::endl;
-            return std::any();
+            ARGUMENT_MISSING("variable-name");
         }
     });
 
@@ -111,8 +114,67 @@ Arguments::Arguments(int argc, char* argv[])
         }
         else
         {
-            std::cout << "Argument missing: --dirac-point" << std::endl;
-            return std::any();
+            ARGUMENT_MISSING("dirac-point");
+        }
+    });
+
+    m_optionParsers.emplace("boundary-function-idx", [](const po::variables_map& vm)
+    {
+        if (vm.count("boundary-function-idx"))
+        {
+            const int boundaryFunctionIdx = vm["boundary-function-idx"].as<int>();
+            if (boundaryFunctionIdx >= 0)
+            {
+                return std::any(boundaryFunctionIdx);
+            }
+            else
+            {
+                return std::any();
+            }
+        }
+        else
+        {
+            ARGUMENT_MISSING("boundary-function-idx");
+        }
+    });
+
+    m_optionParsers.emplace("element-idx", [](const po::variables_map& vm)
+    {
+        if (vm.count("element-idx"))
+        {
+            const int elementIdx = vm["element-idx"].as<int>();
+            if (elementIdx >= 0)
+            {
+                return std::any(elementIdx);
+            }
+            else
+            {
+                return std::any();
+            }
+        }
+        else
+        {
+            ARGUMENT_MISSING("element-idx");
+        }
+    });
+
+    m_optionParsers.emplace("local-side-idx", [](const po::variables_map& vm)
+    {
+        if (vm.count("local-side-idx"))
+        {
+            const int localSideIdx = vm["local-side-idx"].as<int>();
+            if (localSideIdx >= 0)
+            {
+                return std::any(localSideIdx);
+            }
+            else
+            {
+                return std::any();
+            }
+        }
+        else
+        {
+            ARGUMENT_MISSING("local-side-idx");
         }
     });
 }

@@ -33,3 +33,15 @@ target_link_libraries(generate_dirac_load_header
         apps_refdata_utils_lib
         fem_assembly_lib
 )
+
+add_executable(generate_neumann_load_header
+    GenerateNeumannLoadHeaderMain.cpp
+)
+
+target_link_libraries(generate_neumann_load_header
+    PRIVATE
+        apps_common_lib
+        apps_refdata_utils_lib
+        fem_assembly_lib
+        fem_assembly_ut_refdata_lib
+)
