@@ -56,4 +56,5 @@ std::vector<std::pair<Mesh::ElementIndex, Mesh::SideIndex>> getMeshBoundary(cons
 Mesh createMeshFromFile(const std::string& filename);
 Mesh createMeshFromFile(std::istream& input);
 std::pair<std::vector<Node>, std::vector<std::vector<Mesh::NodeIndex>>> parseMeshFile(std::istream& input);
+mpq_class calculateMeshArea(const Mesh& mesh);
 } // namespace fem

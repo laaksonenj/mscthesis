@@ -226,4 +226,23 @@ std::pair<std::vector<Node>, std::vector<std::vector<Mesh::NodeIndex>>> parseMes
     }
     return std::make_pair(std::move(nodes), std::move(elements));
 }
+
+mpq_class calculateMeshArea(const Mesh& mesh)
+{
+    mpq_class res = 0;
+    for (int elementIdx = 0; elementIdx < mesh.getNumOfElements(); elementIdx++)
+    {
+        const Element& element = mesh.getElement(elementIdx);
+        const mpq_class detA = element.getReferenceElementMap().A.determinant();
+        if (element.getElementType() == ElementType_Parallelogram)
+        {
+            res += 4 * detA;
+        }
+        else
+        {
+            res += detA / 2;
+        }
+    }
+    return res;
+}
 } // namespace fem

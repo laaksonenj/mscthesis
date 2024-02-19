@@ -146,6 +146,11 @@ TEST_F(MeshTestFixture, GetMeshBoundary)
     EXPECT_EQ(getMeshBoundary(mesh), expected);
 }
 
+TEST_F(MeshTestFixture, MeshArea)
+{
+    EXPECT_EQ(calculateMeshArea(mesh), 3);
+}
+
 TEST(MeshTest, ParseMeshFile)
 {
     std::stringstream ss;

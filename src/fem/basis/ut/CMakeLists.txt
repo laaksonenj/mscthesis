@@ -3,6 +3,7 @@ add_unit_test(fem_basis_test
         BasisFunctionIndexerTest.cpp
         ShapeFunctionFactoryTest.cpp
         ShapeFunctionIndexerTest.cpp
+        TrialFunctionTest.cpp
     LIBRARIES
         fem_basis_lib
 )
