@@ -124,6 +124,18 @@ ShapeFunctionDescriptor ShapeFunctionIndexer::getShapeFunctionDescriptor(Element
     }
 }
 
+InternalShapeFunctionDescriptor ShapeFunctionIndexer::getInternalShapeFunctionDescriptor(ElementType elementType, uint32_t internalShapeFunctionIdx) const
+{
+    if (elementType == ElementType_Parallelogram)
+    {
+        return getInternalShapeFunctionDescriptorQuadrilateral(internalShapeFunctionIdx);
+    }
+    else
+    {
+        return getInternalShapeFunctionDescriptorTriangle(internalShapeFunctionIdx);
+    }
+}
+
 uint32_t ShapeFunctionIndexer::getInternalShapeFunctionIndex(ElementType elementType, const InternalShapeFunctionDescriptor& descriptor) const
 {
     if (elementType == ElementType_Parallelogram)

@@ -41,7 +41,9 @@ TEST(ShapeFunctionIndexerTest, TriangleTrunkSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
-                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex++);
+                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
+                EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
+                internalShapeFunctionIndex++;
             }
         }
     }
@@ -82,7 +84,9 @@ TEST(ShapeFunctionIndexerTest, TriangleProductSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
-                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex++);
+                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
+                EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
+                internalShapeFunctionIndex++;
             }
         }
     }
@@ -124,7 +128,9 @@ TEST(ShapeFunctionIndexerTest, QuadrilateralTrunkSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
-                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex++);
+                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
+                EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
+                internalShapeFunctionIndex++;
             }
         }
     }
@@ -165,7 +171,9 @@ TEST(ShapeFunctionIndexerTest, QuadrilateralProductSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
-                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex++);
+                EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
+                EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
+                internalShapeFunctionIndex++;
             }
         }
     }

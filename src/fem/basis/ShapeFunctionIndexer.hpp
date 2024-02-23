@@ -20,6 +20,7 @@ public:
     uint32_t getNumOfShapeFunctions(ElementType elementType) const;
 
     ShapeFunctionDescriptor getShapeFunctionDescriptor(ElementType elementType, uint32_t shapeFunctionIdx) const;
+    InternalShapeFunctionDescriptor getInternalShapeFunctionDescriptor(ElementType elementType, uint32_t internalShapeFunctionIdx) const;
     uint32_t getInternalShapeFunctionIndex(ElementType elementType, const InternalShapeFunctionDescriptor& descriptor) const;
 
 private:

@@ -72,7 +72,9 @@ BasisFunctionDescriptor BasisFunctionIndexer::getBasisFunctionDescriptor(uint32_
         {
             const uint32_t elementIdx = i - 1;
             const uint32_t internalShapeFunctionIdx = basisFunctionIndex - m_accumulatedNumsOfInternalBasisFunctions.at(elementIdx);
-            return InternalBasisFunctionDescriptor(elementIdx, internalShapeFunctionIdx);
+            const Element& element = m_mesh.getElement(elementIdx);
+            const InternalShapeFunctionDescriptor desc = m_shapeFunctionIndexer.getInternalShapeFunctionDescriptor(element.getElementType(), internalShapeFunctionIdx);
+            return InternalBasisFunctionDescriptor(elementIdx, desc.k, desc.l);
         }
     }
     assert(false);
@@ -150,9 +152,7 @@ uint32_t BasisFunctionIndexer::getBasisFunctionIndexVisit(Mesh::ElementIndex ele
 
 uint32_t BasisFunctionIndexer::getBasisFunctionIndexVisit(Mesh::ElementIndex elementIdx, const InternalShapeFunctionDescriptor& desc) const
 {
-    const Element& element = m_mesh.getElement(elementIdx);
-    const uint32_t internalShapeFunctionIdx = m_shapeFunctionIndexer.getInternalShapeFunctionIndex(element.getElementType(), desc);
-    return getBasisFunctionIndexVisit(InternalBasisFunctionDescriptor(elementIdx, internalShapeFunctionIdx));
+    return getBasisFunctionIndexVisit(InternalBasisFunctionDescriptor(elementIdx, desc.k, desc.l));
 }
 
 uint32_t BasisFunctionIndexer::getBasisFunctionIndexVisit(const NodalBasisFunctionDescriptor& desc) const
@@ -172,7 +172,8 @@ uint32_t BasisFunctionIndexer::getBasisFunctionIndexVisit(const InternalBasisFun
 {
     uint32_t res = m_numOfNodalBasisFunctions + m_numOfSideBasisFunctions;
     res += m_accumulatedNumsOfInternalBasisFunctions.at(desc.elementIdx);
-    res += desc.internalShapeFunctionIdx;
+    const Element& element = m_mesh.getElement(desc.elementIdx);
+    res += m_shapeFunctionIndexer.getInternalShapeFunctionIndex(element.getElementType(), InternalShapeFunctionDescriptor(desc.k, desc.l));
     return res;
 }
 } // namespace fem

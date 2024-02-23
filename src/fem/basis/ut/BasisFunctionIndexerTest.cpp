@@ -129,29 +129,35 @@ protected:
     
     void checkInternalBasisFunctionsProductQuad(uint32_t elementIdx, const BasisFunctionIndexer& indexer, uint32_t p)
     {
-        for (int internalShapeFunctionIdx = 0; internalShapeFunctionIdx < (p-1)*(p-1); internalShapeFunctionIdx++)
+        for (int k = 2; k <= p; k++)
         {
-            uint32_t shapeFunctionIdx = 4 + 4*(p-1) + internalShapeFunctionIdx;
-            BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
-            uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
-            EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, internalShapeFunctionIdx)));
-            EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
-            EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
-            basisFunctionIndices.insert(basisFunctionIdx);
+            for (int l = 2; l <= p; l++)
+            {
+                uint32_t shapeFunctionIdx = 4 + 4*(p-1) + (k-2)*(p-1) + l-2;
+                BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
+                uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
+                EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, k, l)));
+                EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
+                EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
+                basisFunctionIndices.insert(basisFunctionIdx);
+            }
         }
     }
 
     void checkInternalBasisFunctionsProductTri(uint32_t elementIdx, const BasisFunctionIndexer& indexer, int p)
     {
-        for (int internalShapeFunctionIdx = 0; internalShapeFunctionIdx < (p-1)*(p-1); internalShapeFunctionIdx++)
+        for (int k = 0; k <= p-2; k++)
         {
-            uint32_t shapeFunctionIdx = 3 + 3*(p-1) + internalShapeFunctionIdx;
-            BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
-            uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
-            EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, internalShapeFunctionIdx)));
-            EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
-            EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
-            basisFunctionIndices.insert(basisFunctionIdx);
+            for (int l = 0; l <= p-2; l++)
+            {
+                uint32_t shapeFunctionIdx = 3 + 3*(p-1) + k*(p-1) + l;
+                BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
+                uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
+                EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, k, l)));
+                EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
+                EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
+                basisFunctionIndices.insert(basisFunctionIdx);
+            }
         }
     }
 
@@ -172,33 +178,39 @@ protected:
 
     void checkInternalBasisFunctionsTrunkQuad(uint32_t elementIdx, const BasisFunctionIndexer& indexer, int p)
     {
-        if (p < 4)
+        uint32_t internalShapeFunctionIdxBase = 0;
+        for (int k = 2; k <= p-2; k++)
         {
-            return;
-        }
-        for (int internalShapeFunctionIdx = 0; internalShapeFunctionIdx < (p-2)*(p-3)/2; internalShapeFunctionIdx++)
-        {
-            uint32_t shapeFunctionIdx = 4 + 4*(p-1) + internalShapeFunctionIdx;
-            BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
-            uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
-            EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, internalShapeFunctionIdx)));
-            EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
-            EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
-            basisFunctionIndices.insert(basisFunctionIdx);
+            for (int l = 2; l <= p-k; l++)
+            {
+                uint32_t shapeFunctionIdx = 4 + 4*(p-1) + internalShapeFunctionIdxBase + l-2;
+                BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
+                uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
+                EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, k, l)));
+                EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
+                EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
+                basisFunctionIndices.insert(basisFunctionIdx);
+            }
+            internalShapeFunctionIdxBase += p-k-1;
         }
     }
 
     void checkInternalBasisFunctionsTrunkTri(uint32_t elementIdx, const BasisFunctionIndexer& indexer, int p)
     {
-        for (int internalShapeFunctionIdx = 0; internalShapeFunctionIdx < (p-1)*(p-2)/2; internalShapeFunctionIdx++)
+        uint32_t internalShapeFunctionIdxBase = 0;
+        for (int k = 0; k <= p-3; k++)
         {
-            uint32_t shapeFunctionIdx = 3 + 3*(p-1) + internalShapeFunctionIdx;
-            BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
-            uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
-            EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, internalShapeFunctionIdx)));
-            EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
-            EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
-            basisFunctionIndices.insert(basisFunctionIdx);
+            for (int l = 0; l <= p-k-3; l++)
+            {
+                uint32_t shapeFunctionIdx = 3 + 3*(p-1) + internalShapeFunctionIdxBase + l;
+                BasisFunctionDescriptor desc = indexer.getBasisFunctionDescriptor(elementIdx, shapeFunctionIdx);
+                uint32_t basisFunctionIdx = indexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
+                EXPECT_EQ(desc, BasisFunctionDescriptor(InternalBasisFunctionDescriptor(elementIdx, k, l)));
+                EXPECT_EQ(basisFunctionIdx, indexer.getBasisFunctionIndex(desc));
+                EXPECT_EQ(desc, indexer.getBasisFunctionDescriptor(basisFunctionIdx));
+                basisFunctionIndices.insert(basisFunctionIdx);
+            }
+            internalShapeFunctionIdxBase += p-k-2;
         }
     }
 

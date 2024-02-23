@@ -24,7 +24,8 @@ struct SideBasisFunctionDescriptor
 struct InternalBasisFunctionDescriptor
 {
     Mesh::ElementIndex elementIdx;
-    uint32_t internalShapeFunctionIdx;
+    uint32_t k;
+    uint32_t l;
 };
 
 using BasisFunctionDescriptor = std::variant<NodalBasisFunctionDescriptor, SideBasisFunctionDescriptor, InternalBasisFunctionDescriptor>;
@@ -41,7 +42,7 @@ inline bool operator==(const SideBasisFunctionDescriptor& lhs, const SideBasisFu
 
 inline bool operator==(const InternalBasisFunctionDescriptor& lhs, const InternalBasisFunctionDescriptor& rhs)
 {
-    return lhs.elementIdx == rhs.elementIdx && lhs.internalShapeFunctionIdx == rhs.internalShapeFunctionIdx;
+    return lhs.elementIdx == rhs.elementIdx && lhs.k == rhs.k && lhs.l == rhs.l;
 }
 
 inline size_t hash_value(const NodalBasisFunctionDescriptor& val)
@@ -56,7 +57,7 @@ inline size_t hash_value(const SideBasisFunctionDescriptor& val)
 
 inline size_t hash_value(const InternalBasisFunctionDescriptor& val)
 {
-    return boost::hash_value(std::make_tuple(val.elementIdx, val.internalShapeFunctionIdx));
+    return boost::hash_value(std::make_tuple(val.elementIdx, val.k, val.l));
 }
 } // namespace fem
 
