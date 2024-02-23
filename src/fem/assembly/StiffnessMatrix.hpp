@@ -8,4 +8,5 @@ namespace fem
 {
 MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer, const ShapeFunctionFactory& shapeFunctionFactory);
 MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer);
+MatrixXmpq extractSubStiffnessMatrix(const MatrixXmpq& stiffnessMatrix, const BasisFunctionIndexer& superBasisFunctionIndexer, const BasisFunctionIndexer& subBasisFunctionIndexer);
 } // namespace fem

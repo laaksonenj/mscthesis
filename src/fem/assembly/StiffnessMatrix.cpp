@@ -44,4 +44,22 @@ MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionInde
     }
     return res;
 }
+
+MatrixXmpq extractSubStiffnessMatrix(const MatrixXmpq& stiffnessMatrix, const BasisFunctionIndexer& superBasisFunctionIndexer, const BasisFunctionIndexer& subBasisFunctionIndexer)
+{
+    const uint32_t numOfBasisFunctions = subBasisFunctionIndexer.getNumOfBasisFunctions();
+    MatrixXmpq res(numOfBasisFunctions, numOfBasisFunctions);
+    for (int i = 0; i < numOfBasisFunctions; i++)
+    {
+        const BasisFunctionDescriptor desc_i = subBasisFunctionIndexer.getBasisFunctionDescriptor(i);
+        const int ii = superBasisFunctionIndexer.getBasisFunctionIndex(desc_i);
+        for (int j = 0; j < numOfBasisFunctions; j++)
+        {
+            const BasisFunctionDescriptor desc_j = subBasisFunctionIndexer.getBasisFunctionDescriptor(j);
+            const int jj = superBasisFunctionIndexer.getBasisFunctionIndex(desc_j);
+            res(i,j) = stiffnessMatrix(ii,jj);
+        }
+    }
+    return res;
+}
 } // namespace fem

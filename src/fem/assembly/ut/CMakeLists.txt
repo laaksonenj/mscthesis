@@ -15,6 +15,7 @@ target_link_libraries(fem_assembly_ut_refdata_lib
 add_unit_test(fem_assembly_test
     SOURCES
         DiracLoadVectorTest.cpp
+        LoadVectorTest.cpp
         NeumannLoadVectorTest.cpp
         StiffnessMatrixTest.cpp
     LIBRARIES
