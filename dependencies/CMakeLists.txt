@@ -7,3 +7,7 @@ find_package(Eigen3 CONFIG REQUIRED GLOBAL)
 find_package(GMP REQUIRED GLOBAL)
 find_package(GSL REQUIRED GLOBAL)
 find_package(GTest CONFIG REQUIRED GLOBAL)
+find_package(OpenMP REQUIRED GLOBAL
+    COMPONENTS
+        CXX
+)

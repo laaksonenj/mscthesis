@@ -15,6 +15,8 @@ target_link_libraries(fem_basis_lib
         Boost::boost
         fem_domain_lib
         fem_math_lib
+    PRIVATE
+        OpenMP::OpenMP_CXX
 )
 
 add_subdirectory(ut)
