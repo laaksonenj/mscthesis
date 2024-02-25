@@ -35,6 +35,9 @@ public:
     const Element& getElement(ElementIndex elementIdx) const { assert(elementIdx < getNumOfElements()); return *(m_elements[elementIdx]); }
     std::optional<ElementIndex> getIndexOfAdjacentElement(ElementIndex elementIdx, SideIndex localSideIdx) const;
 
+    bool containsTriangle() const { return m_containsTriangle; }
+    bool containsQuadrilateral() const { return m_containsQuadrilateral; }
+
 private:
     void createElements(const std::vector<Node>& nodes, const std::vector<std::vector<NodeIndex>>& elements);
     void assignGlobalSideIndices();
@@ -48,6 +51,8 @@ private:
     std::vector<std::vector<ElementIndex>> m_adjacentElements;
     uint32_t m_numOfNodes;
     uint32_t m_numOfSides;
+    bool m_containsTriangle;
+    bool m_containsQuadrilateral;
 };
 
 Mesh::ElementIndex getIndexOfElementContainingPoint(const Mesh& mesh, const Vector2mpq& point);

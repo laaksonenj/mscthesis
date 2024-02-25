@@ -16,6 +16,9 @@ target_link_libraries(fem_assembly_lib
         fem_domain_lib
         fem_math_lib
         fem_multiprecision_lib
+    PRIVATE
+        Boost::boost
+        OpenMP::OpenMP_CXX
 )
 
 add_subdirectory(ut)

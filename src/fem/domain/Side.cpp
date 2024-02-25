@@ -72,6 +72,14 @@ std::optional<mpq_class> findIntersectionOfLineAndPoint(const Line& line, const 
 }
 } // namespace
 
+Vector2mpq calculateNormal(const Side& side)
+{
+    const Vector2mpq d = side.b - side.a;
+    Vector2mpf n(d(1), -d(0));
+    n.normalize();
+    return Vector2mpq(n(0), n(1));
+}
+
 bool areParallel(const Side& side1, const Side& side2)
 {
     const Vector2mpq& a1 = side1.a;

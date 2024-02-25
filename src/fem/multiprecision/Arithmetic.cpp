@@ -19,4 +19,22 @@ mpq_class pow(mpq_class base, int exp)
     }
     return res;
 }
+
+double log(const mpq_class& x)
+{
+    // x = a/b
+    // log(x) = log(a) - log(b)
+    assert(x > 0);
+    return log(x.get_num()) - log(x.get_den());
+}
+
+double log(const mpz_class& x)
+{
+    // x = d * 2^exp
+    // log(x) = log(d) + exp * log(2)
+    assert(x > 0);
+    signed long int exp;
+    const double d = mpz_get_d_2exp(&exp, x.get_mpz_t());
+    return std::log(d) + exp * std::log(2);
+}
 } // namespace fem

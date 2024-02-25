@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 #include "fem/domain/Side.hpp"
 
 namespace fem::ut
@@ -50,5 +52,21 @@ TEST(SideTest, Intersection)
     EXPECT_FALSE(areIntersecting(side1, side5));
     EXPECT_FALSE(areIntersecting(side2, side5));
     EXPECT_FALSE(areIntersecting(side3, side4));
+}
+
+namespace
+{
+void checkNear(const Vector2mpq& actual, const Vector2mpq& expected)
+{
+    EXPECT_NEAR(actual(0).get_d(), expected(0).get_d(), 1e-7);
+    EXPECT_NEAR(actual(1).get_d(), expected(1).get_d(), 1e-7);
+}
+} // namespace
+
+TEST(SideTest, Normal)
+{
+    checkNear(calculateNormal(Side({1, -1}, {1, 1})), Vector2mpq(1, 0));
+    checkNear(calculateNormal(Side({0, 0}, {"-1/4", "1/4"})), Vector2mpq(1.0/std::sqrt(2.0), 1.0/std::sqrt(2.0)));
+    checkNear(calculateNormal(Side({"3/8", "12/5"}, {"-4", "0"})), Vector2mpq(-96.0/std::sqrt(39841), 175.0/std::sqrt(39841)));
 }
 } // namespace fem::ut

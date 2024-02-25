@@ -13,6 +13,8 @@ namespace fem
 Mesh::Mesh(const std::vector<Node>& nodes, const std::vector<std::vector<NodeIndex>>& elements)
     : m_globalNodeIndices(elements)
     , m_numOfNodes(nodes.size())
+    , m_containsTriangle(false)
+    , m_containsQuadrilateral(false)
 {
     createElements(nodes, elements);
     assignGlobalSideIndices();
@@ -58,10 +60,12 @@ void Mesh::createElements(const std::vector<Node>& nodes, const std::vector<std:
         if (idxs.size() == 3)
         {
             m_elements.push_back(std::make_unique<Triangle>(nodes.at(idxs[0]), nodes.at(idxs[1]), nodes.at(idxs[2])));
+            m_containsTriangle = true;
         }
         else if (idxs.size() == 4)
         {
             m_elements.push_back(std::make_unique<Parallelogram>(nodes.at(idxs[0]), nodes.at(idxs[1]), nodes.at(idxs[2]), nodes.at(idxs[3])));
+            m_containsQuadrilateral = true;
         }
         else
         {

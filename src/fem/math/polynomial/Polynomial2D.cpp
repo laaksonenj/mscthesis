@@ -112,7 +112,7 @@ void Polynomial2D::addMonomial(Monomial2D monomial)
     }
     if (monomial.coefficient != 0)
     {
-        m_monomials.emplace(key, monomial);
+        m_monomials.emplace(key, std::move(monomial));
     }
 }
 

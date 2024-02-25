@@ -1,25 +1,48 @@
 #include "fem/assembly/NeumannLoadVector.hpp"
 
+#include "fem/basis/BasisFunctionIndexer.hpp"
 #include "fem/math/Quadrature.hpp"
 
 namespace fem
 {
-VectorXmpq assembleNeumannLoadVector(const BasisFunctionIndexer& basisFunctionIndexer,
+VectorXmpq assembleNeumannLoadVector(const FemContext& ctx,
                                      const BivariateFunction& g,
                                      Mesh::ElementIndex elementIdx,
                                      Mesh::SideIndex localSideIdx,
                                      const ShapeFunctionFactory& shapeFunctionFactory)
 {
-    return assembleNeumannLoadVector(basisFunctionIndexer, g, elementIdx, localSideIdx);
+    return assembleNeumannLoadVector(ctx, g, elementIdx, localSideIdx);
 }
 
-VectorXmpq assembleNeumannLoadVector(const BasisFunctionIndexer& basisFunctionIndexer,
+VectorXmpq assembleNeumannLoadVector(const FemContext& ctx,
+                                     const GradientFunction& grad_u,
+                                     const ShapeFunctionFactory& shapeFunctionFactory)
+{
+    const BasisFunctionIndexer basisFunctionIndexer(ctx);
+    VectorXmpq res(basisFunctionIndexer.getNumOfBasisFunctions());
+    const Mesh& mesh = *(ctx.mesh);
+    for (const auto& [elementIdx, localSideIdx] : getMeshBoundary(mesh))
+    {
+        const Element& element = mesh.getElement(elementIdx);
+        const Side side = element.getSide(localSideIdx);
+        const Vector2mpq n = calculateNormal(side);
+        auto g = [&grad_u, &n](const Vector2mpq& x) -> mpq_class
+        {
+            return grad_u(x).dot(n);
+        };
+        res += assembleNeumannLoadVector(ctx, g, elementIdx, localSideIdx, shapeFunctionFactory);
+    }
+    return res;
+}
+
+VectorXmpq assembleNeumannLoadVector(const FemContext& ctx,
                                      const BivariateFunction& g,
                                      Mesh::ElementIndex elementIdx,
                                      Mesh::SideIndex localSideIdx)
 {
-    const Mesh& mesh = basisFunctionIndexer.getMesh();
+    const Mesh& mesh = *(ctx.mesh);
     assert(!mesh.getIndexOfAdjacentElement(elementIdx, localSideIdx).has_value());
+    const BasisFunctionIndexer basisFunctionIndexer(ctx);
     const uint32_t numOfBasisFunctions = basisFunctionIndexer.getNumOfBasisFunctions();
     VectorXmpq res(numOfBasisFunctions);
     const Element& element = mesh.getElement(elementIdx);
@@ -34,9 +57,9 @@ VectorXmpq assembleNeumannLoadVector(const BasisFunctionIndexer& basisFunctionIn
     for (int shapeFunctionIdx = 0; shapeFunctionIdx < basisFunctionIndexer.getNumOfShapeFunctions(elementIdx); shapeFunctionIdx++)
     {
         const Polynomial2D shapeFn = basisFunctionIndexer.getShapeFunction(elementIdx, shapeFunctionIdx);
-        auto v = [&shapeFn, &Finv](const Vector2mpq& p) -> mpq_class
+        auto v = [&shapeFn, &Finv](const Vector2mpq& x) -> mpq_class
         {
-            return shapeFn(Finv(p));
+            return shapeFn(Finv(x));
         };
         auto f = [&g, &v, &r](const mpq_class& t) -> mpq_class
         {

@@ -1,12 +1,16 @@
 #pragma once
 
-#include "fem/basis/BasisFunctionIndexer.hpp"
+#include <cstdint>
+
+#include "fem/basis/FemContext.hpp"
 #include "fem/basis/ShapeFunctionFactory.hpp"
 #include "fem/multiprecision/Types.hpp"
 
 namespace fem
 {
-MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer, const ShapeFunctionFactory& shapeFunctionFactory);
-MatrixXmpq assembleStiffnessMatrix(const BasisFunctionIndexer& basisFunctionIndexer);
-MatrixXmpq extractSubStiffnessMatrix(const MatrixXmpq& stiffnessMatrix, const BasisFunctionIndexer& superBasisFunctionIndexer, const BasisFunctionIndexer& subBasisFunctionIndexer);
+MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx, ShapeFunctionFactory& shapeFunctionFactory);
+MatrixXmpq extractSubStiffnessMatrix(const MatrixXmpq& stiffnessMatrix, const FemContext& ctx, uint32_t p);
+
+/* Slow reference implementation */
+MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx);
 } // namespace fem

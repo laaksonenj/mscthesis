@@ -1,5 +1,7 @@
 #include "fem/basis/TrialFunction.hpp"
 
+#include "fem/math/Quadrature.hpp"
+
 namespace fem
 {
 mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const BasisFunctionIndexer& basisFunctionIndexer, const Vector2mpq& p, const ShapeFunctionFactory& shapeFunctionFactory)
@@ -21,6 +23,37 @@ void normalizeTrialFunction(VectorXmpq& coefficients, const BasisFunctionIndexer
     {
         coefficients(nodeIdx) -= normalizationConst;
     }
+}
+
+mpq_class calculateSquaredL2Error(const VectorXmpq& coefficients,
+                                  const BivariateFunction& u,
+                                  const BasisFunctionIndexer& basisFunctionIndexer,
+                                  const ShapeFunctionFactory& shapeFunctionFactory)
+{
+    mpq_class res = 0;
+    const Mesh& mesh = basisFunctionIndexer.getMesh();
+    for (int elementIdx = 0; elementIdx < mesh.getNumOfElements(); elementIdx++)
+    {
+        res += calculateSquaredL2Error(coefficients, u, elementIdx, basisFunctionIndexer, shapeFunctionFactory);
+    }
+    return res;
+}
+
+mpq_class calculateSquaredL2Error(const VectorXmpq& coefficients,
+                                  const BivariateFunction& u,
+                                  Mesh::ElementIndex elementIdx,
+                                  const BasisFunctionIndexer& basisFunctionIndexer,
+                                  const ShapeFunctionFactory& shapeFunctionFactory,
+                                  uint32_t numOfGaussLegendrePoints)
+{
+    const Mesh& mesh = basisFunctionIndexer.getMesh();
+    const Element& element = mesh.getElement(elementIdx);
+    auto f = [&coefficients, &u, &basisFunctionIndexer, &shapeFunctionFactory](const Vector2mpq& p) -> mpq_class
+    {
+        const mpq_class err = u(p) - evaluateTrialFunction(coefficients, basisFunctionIndexer, p, shapeFunctionFactory);
+        return err*err;
+    };
+    return integrateGaussLegendre(f, element, numOfGaussLegendrePoints);
 }
 
 mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const BasisFunctionIndexer& basisFunctionIndexer, const Vector2mpq& p)
