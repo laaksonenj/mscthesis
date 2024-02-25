@@ -30,13 +30,15 @@ protected:
         {6, 7, 8, 5},
         {8, 9, 3}
     };
-    const Mesh mesh{vertices, elements};
+    std::shared_ptr<Mesh> mesh{new Mesh(vertices, elements)};
 
     std::set<uint32_t> basisFunctionIndices;
 
     void checkBasisFunctions(uint32_t p, PolynomialSpaceType polynomialSpaceType)
     {
-        BasisFunctionIndexer indexer(mesh, p, polynomialSpaceType);
+        basisFunctionIndices.clear();
+        const FemContext ctx(mesh, p, polynomialSpaceType);
+        BasisFunctionIndexer indexer(ctx);
         EXPECT_EQ(indexer.getNumOfBasisFunctions(), getNumOfBasisFunctions(p, polynomialSpaceType));
         checkNodalBasisFunctions(indexer);
         checkSideBasisFunctions(indexer, p);
@@ -216,7 +218,8 @@ protected:
 
     void checkContinuityOverSides(uint32_t p)
     {
-        BasisFunctionIndexer indexer(mesh, p, PolynomialSpaceType_Product);
+        const FemContext ctx(mesh, p, PolynomialSpaceType_Product);
+        BasisFunctionIndexer indexer(ctx);
         checkContinuityOverSide2(indexer, p);
         checkContinuityOverSide3(indexer, p);
         checkContinuityOverSide5(indexer, p);
@@ -229,8 +232,8 @@ protected:
         const uint32_t elementIdx2 = 1;
         const Polynomial1D sideParameterizationX("t");
         const Polynomial1D sideParameterizationY(0);
-        const AffineMap G1 = mesh.getElement(elementIdx1).getReferenceElementMap().inverse();
-        const AffineMap G2 = mesh.getElement(elementIdx2).getReferenceElementMap().inverse();
+        const AffineMap G1 = mesh->getElement(elementIdx1).getReferenceElementMap().inverse();
+        const AffineMap G2 = mesh->getElement(elementIdx2).getReferenceElementMap().inverse();
         
         /* Nodal basis functions */
         EXPECT_EQ(compose(compose(indexer.getShapeFunction(elementIdx1, 2), G1), sideParameterizationX, sideParameterizationY),
@@ -252,8 +255,8 @@ protected:
         const uint32_t elementIdx2 = 3;
         const Polynomial1D sideParameterizationX(0);
         const Polynomial1D sideParameterizationY("t-1");
-        const AffineMap G1 = mesh.getElement(elementIdx1).getReferenceElementMap().inverse();
-        const AffineMap G2 = mesh.getElement(elementIdx2).getReferenceElementMap().inverse();
+        const AffineMap G1 = mesh->getElement(elementIdx1).getReferenceElementMap().inverse();
+        const AffineMap G2 = mesh->getElement(elementIdx2).getReferenceElementMap().inverse();
         
         /* Nodal basis functions */
         EXPECT_EQ(compose(compose(indexer.getShapeFunction(elementIdx1, 0), G1), sideParameterizationX, sideParameterizationY),
@@ -275,8 +278,8 @@ protected:
         const uint32_t elementIdx2 = 2;
         const Polynomial1D sideParameterizationX(0);
         const Polynomial1D sideParameterizationY("t");
-        const AffineMap G1 = mesh.getElement(elementIdx1).getReferenceElementMap().inverse();
-        const AffineMap G2 = mesh.getElement(elementIdx2).getReferenceElementMap().inverse();
+        const AffineMap G1 = mesh->getElement(elementIdx1).getReferenceElementMap().inverse();
+        const AffineMap G2 = mesh->getElement(elementIdx2).getReferenceElementMap().inverse();
         
         /* Nodal basis functions */
         EXPECT_EQ(compose(compose(indexer.getShapeFunction(elementIdx1, 1), G1), sideParameterizationX, sideParameterizationY),
@@ -298,8 +301,8 @@ protected:
         const uint32_t elementIdx2 = 3;
         const Polynomial1D sideParameterizationX("-t");
         const Polynomial1D sideParameterizationY(0);
-        const AffineMap G1 = mesh.getElement(elementIdx1).getReferenceElementMap().inverse();
-        const AffineMap G2 = mesh.getElement(elementIdx2).getReferenceElementMap().inverse();
+        const AffineMap G1 = mesh->getElement(elementIdx1).getReferenceElementMap().inverse();
+        const AffineMap G2 = mesh->getElement(elementIdx2).getReferenceElementMap().inverse();
         
         /* Nodal basis functions */
         EXPECT_EQ(compose(compose(indexer.getShapeFunction(elementIdx1, 2), G1), sideParameterizationX, sideParameterizationY),

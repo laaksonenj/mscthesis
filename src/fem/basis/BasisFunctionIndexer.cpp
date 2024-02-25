@@ -16,29 +16,34 @@ auto calculateAccumulatedNumsOfInternalBasisFunctions(const Mesh& mesh, uint32_t
     return res;
 }
 
-BasisFunctionIndexer::BasisFunctionIndexer(const Mesh& mesh, uint32_t p, PolynomialSpaceType polynomialSpaceType)
-    : m_mesh(mesh)
-    , m_p(p)
-    , m_polynomialSpaceType(polynomialSpaceType)
-    , m_numOfNodalBasisFunctions(mesh.getNumOfNodes())
-    , m_numOfSideBasisFunctions(mesh.getNumOfSides() * (p-1))
-    , m_accumulatedNumsOfInternalBasisFunctions(calculateAccumulatedNumsOfInternalBasisFunctions(mesh, p, polynomialSpaceType))
+BasisFunctionIndexer::BasisFunctionIndexer(const FemContext& ctx)
+    : m_mesh(ctx.mesh)
+    , m_p(ctx.p)
+    , m_polynomialSpaceType(ctx.polynomialSpaceType)
+    , m_numOfNodalBasisFunctions(m_mesh->getNumOfNodes())
+    , m_numOfSideBasisFunctions(m_mesh->getNumOfSides() * (m_p-1))
+    , m_accumulatedNumsOfInternalBasisFunctions(calculateAccumulatedNumsOfInternalBasisFunctions(*m_mesh, m_p, m_polynomialSpaceType))
     , m_numOfBasisFunctions(m_numOfNodalBasisFunctions + m_numOfSideBasisFunctions + m_accumulatedNumsOfInternalBasisFunctions.back())
-    , m_shapeFunctionIndexer(ShapeFunctionIndexer(p, polynomialSpaceType))
+    , m_shapeFunctionIndexer(ShapeFunctionIndexer(m_p, m_polynomialSpaceType))
 {
+}
+
+uint32_t BasisFunctionIndexer::getNumOfElements() const
+{
+    return m_mesh->getNumOfElements();
 }
 
 uint32_t BasisFunctionIndexer::getNumOfShapeFunctions(Mesh::ElementIndex elementIdx) const
 {
-    assert(elementIdx < m_mesh.getNumOfElements());
-    const Element& element = m_mesh.getElement(elementIdx);
+    assert(elementIdx < m_mesh->getNumOfElements());
+    const Element& element = m_mesh->getElement(elementIdx);
     return m_shapeFunctionIndexer.getNumOfShapeFunctions(element.getElementType());
 }
 
 uint32_t BasisFunctionIndexer::getBasisFunctionIndex(Mesh::ElementIndex elementIdx, uint32_t shapeFunctionIdx) const
 {
     assert(shapeFunctionIdx < getNumOfShapeFunctions(elementIdx));
-    const Element& element = m_mesh.getElement(elementIdx);
+    const Element& element = m_mesh->getElement(elementIdx);
     const ShapeFunctionDescriptor desc = m_shapeFunctionIndexer.getShapeFunctionDescriptor(element.getElementType(), shapeFunctionIdx);
     return std::visit([this, elementIdx](const auto& arg) { return this->getBasisFunctionIndexVisit(elementIdx, arg); }, desc);
 }
@@ -72,7 +77,7 @@ BasisFunctionDescriptor BasisFunctionIndexer::getBasisFunctionDescriptor(uint32_
         {
             const uint32_t elementIdx = i - 1;
             const uint32_t internalShapeFunctionIdx = basisFunctionIndex - m_accumulatedNumsOfInternalBasisFunctions.at(elementIdx);
-            const Element& element = m_mesh.getElement(elementIdx);
+            const Element& element = m_mesh->getElement(elementIdx);
             const InternalShapeFunctionDescriptor desc = m_shapeFunctionIndexer.getInternalShapeFunctionDescriptor(element.getElementType(), internalShapeFunctionIdx);
             return InternalBasisFunctionDescriptor(elementIdx, desc.k, desc.l);
         }
@@ -84,13 +89,13 @@ BasisFunctionDescriptor BasisFunctionIndexer::getBasisFunctionDescriptor(uint32_
 Polynomial2D BasisFunctionIndexer::getShapeFunction(Mesh::ElementIndex elementIdx, uint32_t shapeFunctionIdx) const
 {
     assert(shapeFunctionIdx < getNumOfShapeFunctions(elementIdx));
-    const Element& element = m_mesh.getElement(elementIdx);
+    const Element& element = m_mesh->getElement(elementIdx);
     const ShapeFunctionDescriptor desc = m_shapeFunctionIndexer.getShapeFunctionDescriptor(element.getElementType(), shapeFunctionIdx);
     const Polynomial2D& shapeFunction = m_shapeFunctionFactory.getShapeFunction(element.getElementType(), desc);
     if (const auto* descp = std::get_if<SideShapeFunctionDescriptor>(&desc))
     {
         const uint32_t localSideIdx = descp->sideIdx;
-        const auto adjacentElementIdx = m_mesh.getIndexOfAdjacentElement(elementIdx, localSideIdx);
+        const auto adjacentElementIdx = m_mesh->getIndexOfAdjacentElement(elementIdx, localSideIdx);
         if (adjacentElementIdx.has_value() && elementIdx < adjacentElementIdx.value())
         {
             if (element.getElementType() == ElementType_Parallelogram)
@@ -140,13 +145,13 @@ Polynomial2D BasisFunctionIndexer::getShapeFunctionDerivative(Mesh::ElementIndex
 
 uint32_t BasisFunctionIndexer::getBasisFunctionIndexVisit(Mesh::ElementIndex elementIdx, const NodalShapeFunctionDescriptor& desc) const
 {
-    const uint32_t nodeIdx = m_mesh.getGlobalNodeIndex(elementIdx, desc.nodeIdx);
+    const uint32_t nodeIdx = m_mesh->getGlobalNodeIndex(elementIdx, desc.nodeIdx);
     return getBasisFunctionIndexVisit(NodalBasisFunctionDescriptor(nodeIdx));
 }
 
 uint32_t BasisFunctionIndexer::getBasisFunctionIndexVisit(Mesh::ElementIndex elementIdx, const SideShapeFunctionDescriptor& desc) const
 {
-    const uint32_t sideIdx = m_mesh.getGlobalSideIndex(elementIdx, desc.sideIdx);
+    const uint32_t sideIdx = m_mesh->getGlobalSideIndex(elementIdx, desc.sideIdx);
     return getBasisFunctionIndexVisit(SideBasisFunctionDescriptor(sideIdx, desc.k));
 }
 
@@ -172,7 +177,7 @@ uint32_t BasisFunctionIndexer::getBasisFunctionIndexVisit(const InternalBasisFun
 {
     uint32_t res = m_numOfNodalBasisFunctions + m_numOfSideBasisFunctions;
     res += m_accumulatedNumsOfInternalBasisFunctions.at(desc.elementIdx);
-    const Element& element = m_mesh.getElement(desc.elementIdx);
+    const Element& element = m_mesh->getElement(desc.elementIdx);
     res += m_shapeFunctionIndexer.getInternalShapeFunctionIndex(element.getElementType(), InternalShapeFunctionDescriptor(desc.k, desc.l));
     return res;
 }

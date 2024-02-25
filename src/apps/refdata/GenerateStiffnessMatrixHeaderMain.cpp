@@ -19,9 +19,8 @@ int main(int argc, char* argv[])
     const PolynomialSpaceType polynomialSpaceType = args.getValue<PolynomialSpaceType>("polynomial-space");
     const std::string varName = args.getValue<std::string>("variable-name");
     
-    const Mesh mesh = createMeshFromFile(meshFilename);
-    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
-    const MatrixXmpq stiffnessMatrix = assembleStiffnessMatrix(basisFunctionIndexer);
+    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), p, polynomialSpaceType);
+    const MatrixXmpq stiffnessMatrix = assembleStiffnessMatrix(ctx);
 
     std::stringstream ss;
     ss << generateCommonHeader();

@@ -20,9 +20,8 @@ int main(int argc, char* argv[])
     const Vector2mpq x_0 = args.getValue<Vector2mpq>("dirac-point");
     const std::string varName = args.getValue<std::string>("variable-name");
 
-    const Mesh mesh = createMeshFromFile(meshFilename);
-    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
-    const VectorXmpq diracLoadVector = assembleDiracLoadVector(basisFunctionIndexer, x_0);
+    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), p, polynomialSpaceType);
+    const VectorXmpq diracLoadVector = assembleDiracLoadVector(ctx, x_0);
 
     std::stringstream ss;
     ss << generateCommonHeader();

@@ -23,9 +23,8 @@ int main(int argc, char* argv[])
     const uint32_t localSideIdx = args.getValue<int>("local-side-idx");
     const std::string varName = args.getValue<std::string>("variable-name");
 
-    const Mesh mesh = createMeshFromFile(meshFilename);
-    const BasisFunctionIndexer basisFunctionIndexer(mesh, p, polynomialSpaceType);
-    const VectorXmpq neumannLoadVector = assembleNeumannLoadVector(basisFunctionIndexer, ut::referenceBoundaryFunctions.at(boundaryFunctionIdx), elementIdx, localSideIdx);
+    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), p, polynomialSpaceType);
+    const VectorXmpq neumannLoadVector = assembleNeumannLoadVector(ctx, ut::referenceBoundaryFunctions.at(boundaryFunctionIdx), elementIdx, localSideIdx);
 
     std::stringstream ss;
     ss << generateCommonHeader();
