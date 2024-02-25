@@ -1,5 +1,6 @@
 add_library(apps_common_lib STATIC
     Arguments.cpp
+    Timer.cpp
 )
 
 target_include_directories(apps_common_lib
