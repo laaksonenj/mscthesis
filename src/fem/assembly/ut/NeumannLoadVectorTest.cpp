@@ -22,11 +22,15 @@ void checkNearElementwise(const VectorXmpq& lhs, const VectorXmpq& rhs)
 TEST(NeumannLoadVectorTest, NeumannLoadVector1)
 {
     const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/neumann_load1/mesh.txt"};
-    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), 4, PolynomialSpaceType_Trunk);
+    const uint32_t p = 4;
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
+    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), p, polynomialSpaceType);
     const BivariateFunction& g = referenceBoundaryFunctions.at(0);
     const uint32_t elementIdx = 1;
     const uint32_t localSideIdx = 0;
-    const ShapeFunctionFactory shapeFunctionFactory;
+    ShapeFunctionFactory shapeFunctionFactory;
+    shapeFunctionFactory.createShapeFunctions(ElementType_Parallelogram, p);
+    shapeFunctionFactory.createShapeFunctions(ElementType_Triangle, p);
     checkNearElementwise(assembleNeumannLoadVector(ctx, g, elementIdx, localSideIdx), refdata::refNeumannLoadVector1);
     checkNearElementwise(assembleNeumannLoadVector(ctx, g, elementIdx, localSideIdx, shapeFunctionFactory), refdata::refNeumannLoadVector1);
 }
@@ -34,11 +38,15 @@ TEST(NeumannLoadVectorTest, NeumannLoadVector1)
 TEST(NeumannLoadVectorTest, NeumannLoadVector2)
 {
     const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/neumann_load2/mesh.txt"};
-    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), 4, PolynomialSpaceType_Product);
+    const uint32_t p = 4;
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Product;
+    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), p, polynomialSpaceType);
     const BivariateFunction& g = referenceBoundaryFunctions.at(1);
     const uint32_t elementIdx = 1;
     const uint32_t localSideIdx = 3;
-    const ShapeFunctionFactory shapeFunctionFactory;
+    ShapeFunctionFactory shapeFunctionFactory;
+    shapeFunctionFactory.createShapeFunctions(ElementType_Parallelogram, p);
+    shapeFunctionFactory.createShapeFunctions(ElementType_Triangle, p);
     checkNearElementwise(assembleNeumannLoadVector(ctx, g, elementIdx, localSideIdx), refdata::refNeumannLoadVector2);
     checkNearElementwise(assembleNeumannLoadVector(ctx, g, elementIdx, localSideIdx, shapeFunctionFactory), refdata::refNeumannLoadVector2);
 }

@@ -10,8 +10,12 @@ namespace fem::ut
 TEST(StiffnessMatrixTest, StiffnessMatrix1)
 {
     const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/stiffness_matrix1/mesh.txt"};
-    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), 4, PolynomialSpaceType_Trunk);
+    const uint32_t p = 4;
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
+    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), p, polynomialSpaceType);
     ShapeFunctionFactory shapeFunctionFactory;
+    shapeFunctionFactory.createShapeFunctions(ElementType_Parallelogram, p);
+    shapeFunctionFactory.createShapeFunctions(ElementType_Triangle, p);
     EXPECT_EQ(assembleStiffnessMatrix(ctx), refdata::refStiffnessMatrix1);
     EXPECT_EQ(assembleStiffnessMatrix(ctx, shapeFunctionFactory), refdata::refStiffnessMatrix1);
 }
@@ -19,8 +23,12 @@ TEST(StiffnessMatrixTest, StiffnessMatrix1)
 TEST(StiffnessMatrixTest, StiffnessMatrix2)
 {
     const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/stiffness_matrix2/mesh.txt"};
-    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), 4, PolynomialSpaceType_Product);
+    const uint32_t p = 4;
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Product;
+    const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), p, polynomialSpaceType);
     ShapeFunctionFactory shapeFunctionFactory;
+    shapeFunctionFactory.createShapeFunctions(ElementType_Parallelogram, p);
+    shapeFunctionFactory.createShapeFunctions(ElementType_Triangle, p);
     EXPECT_EQ(assembleStiffnessMatrix(ctx), refdata::refStiffnessMatrix2);
     EXPECT_EQ(assembleStiffnessMatrix(ctx, shapeFunctionFactory), refdata::refStiffnessMatrix2);
 }
@@ -28,8 +36,12 @@ TEST(StiffnessMatrixTest, StiffnessMatrix2)
 TEST(StiffnessMatrixTest, StiffnessMatrix3)
 {
     const std::string meshFilename = std::string{SRC_DIR} + std::string{"/refdata/stiffness_matrix3/mesh.txt"};
+    const uint32_t p = 1;
+    const PolynomialSpaceType polynomialSpaceType = PolynomialSpaceType_Trunk;
     const FemContext ctx(std::make_shared<Mesh>(createMeshFromFile(meshFilename)), 1, PolynomialSpaceType_Trunk);
     ShapeFunctionFactory shapeFunctionFactory;
+    shapeFunctionFactory.createShapeFunctions(ElementType_Parallelogram, p);
+    shapeFunctionFactory.createShapeFunctions(ElementType_Triangle, p);
     EXPECT_EQ(assembleStiffnessMatrix(ctx), refdata::refStiffnessMatrix3);
     EXPECT_EQ(assembleStiffnessMatrix(ctx, shapeFunctionFactory), refdata::refStiffnessMatrix3);
 }

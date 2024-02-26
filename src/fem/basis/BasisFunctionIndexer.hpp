@@ -5,7 +5,6 @@
 
 #include "fem/basis/BasisFunctionDescriptor.hpp"
 #include "fem/basis/FemContext.hpp"
-#include "fem/basis/ShapeFunctionFactory.hpp"
 #include "fem/basis/ShapeFunctionIndexer.hpp"
 
 namespace fem
@@ -22,10 +21,6 @@ public:
     uint32_t getBasisFunctionIndex(const BasisFunctionDescriptor& descriptor) const;
     BasisFunctionDescriptor getBasisFunctionDescriptor(Mesh::ElementIndex elementIdx, uint32_t shapeFunctionIdx) const;
     BasisFunctionDescriptor getBasisFunctionDescriptor(uint32_t basisFunctionIndex) const;
-
-    /* For testing & reference data generation purposes only */
-    Polynomial2D getShapeFunction(Mesh::ElementIndex elementIdx, uint32_t shapeFunctionIdx) const;
-    Polynomial2D getShapeFunctionDerivative(Mesh::ElementIndex elementIdx, uint32_t shapeFunctionIdx, char variable) const;
 
 private:
     uint32_t getBasisFunctionIndexVisit(Mesh::ElementIndex elementIdx, const NodalShapeFunctionDescriptor& desc) const;
@@ -45,7 +40,6 @@ private:
     std::vector<uint32_t> m_accumulatedNumsOfInternalBasisFunctions;
     uint32_t m_numOfBasisFunctions;
 
-    ShapeFunctionFactory m_shapeFunctionFactory;
     ShapeFunctionIndexer m_shapeFunctionIndexer;
 };
 } // namespace fem

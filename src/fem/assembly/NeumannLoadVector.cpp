@@ -1,5 +1,6 @@
 #include "fem/assembly/NeumannLoadVector.hpp"
 
+#include "fem/basis/BasisFunctionFactory.hpp"
 #include "fem/basis/BasisFunctionIndexer.hpp"
 #include "fem/math/Quadrature.hpp"
 
@@ -42,6 +43,7 @@ VectorXmpq assembleNeumannLoadVector(const FemContext& ctx,
 {
     const Mesh& mesh = *(ctx.mesh);
     assert(!mesh.getIndexOfAdjacentElement(elementIdx, localSideIdx).has_value());
+    const BasisFunctionFactory basisFunctionFactory(ctx);
     const BasisFunctionIndexer basisFunctionIndexer(ctx);
     const uint32_t numOfBasisFunctions = basisFunctionIndexer.getNumOfBasisFunctions();
     VectorXmpq res(numOfBasisFunctions);
@@ -56,7 +58,7 @@ VectorXmpq assembleNeumannLoadVector(const FemContext& ctx,
     const mpq_class rGradNorm = mpq_class(sqrt(mpf_class(d(0)*d(0) + d(1)*d(1)))) / 2;
     for (int shapeFunctionIdx = 0; shapeFunctionIdx < basisFunctionIndexer.getNumOfShapeFunctions(elementIdx); shapeFunctionIdx++)
     {
-        const Polynomial2D shapeFn = basisFunctionIndexer.getShapeFunction(elementIdx, shapeFunctionIdx);
+        const Polynomial2D shapeFn = basisFunctionFactory.getShapeFunction(elementIdx, shapeFunctionIdx);
         auto v = [&shapeFn, &Finv](const Vector2mpq& x) -> mpq_class
         {
             return shapeFn(Finv(x));

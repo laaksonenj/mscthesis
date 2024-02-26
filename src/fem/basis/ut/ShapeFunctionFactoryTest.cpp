@@ -116,17 +116,9 @@ void checkShapeFunctionDerivatives(const ShapeFunctionFactory& f)
 
 TEST(ShapeFunctionFactoryTest, ShapeFunctionsAreCorrect)
 {
-    const ShapeFunctionFactory f;
-    checkQuadrilateralShapeFunctions(f);
-    checkTriangleShapeFunctions(f);
-    checkShapeFunctionDerivatives(f);
-}
-
-TEST(ShapeFunctionFactoryTest, PrecomputedShapeFunctionsAreCorrect)
-{
     ShapeFunctionFactory f;
-    f.precomputeShapeFunctions(ElementType_Parallelogram, 5);
-    f.precomputeShapeFunctions(ElementType_Triangle, 5);
+    f.createShapeFunctions(ElementType_Parallelogram, 5);
+    f.createShapeFunctions(ElementType_Triangle, 5);
     checkQuadrilateralShapeFunctions(f);
     checkTriangleShapeFunctions(f);
     checkShapeFunctionDerivatives(f);

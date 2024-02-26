@@ -1,5 +1,6 @@
 add_unit_test(fem_basis_test
     SOURCES
+        BasisFunctionFactoryTest.cpp
         BasisFunctionIndexerTest.cpp
         ShapeFunctionFactoryTest.cpp
         ShapeFunctionIndexerTest.cpp

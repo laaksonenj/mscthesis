@@ -8,6 +8,7 @@
 
 #include <boost/functional/hash.hpp>
 
+#include "fem/basis/BasisFunctionFactory.hpp"
 #include "fem/basis/BasisFunctionIndexer.hpp"
 #include "fem/basis/ShapeFunctionIndexer.hpp"
 
@@ -21,13 +22,13 @@ struct StiffnessMatrixAssembler
     using ShapeFunctionIntegralCache = std::unordered_map<ShapeFunctionDerivativePair, mpq_class, boost::hash<ShapeFunctionDerivativePair>>;
 
     const FemContext& ctx;
-    ShapeFunctionFactory& shapeFunctionFactory;
+    const ShapeFunctionFactory& shapeFunctionFactory;
     BasisFunctionIndexer basisFunctionIndexer;
     ShapeFunctionIndexer shapeFunctionIndexer;
     MatrixXmpq stiffnessMatrix;
     ShapeFunctionIntegralCache integralCache[2]; // one for triangles and one for quads
 
-    StiffnessMatrixAssembler(const FemContext& ctx, ShapeFunctionFactory& shapeFunctionFactory);
+    StiffnessMatrixAssembler(const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory);
     void assemble();
     void precomputeIntegrals(ElementType elementType);
     void assembleElement(Mesh::ElementIndex elementIdx);
@@ -35,7 +36,7 @@ struct StiffnessMatrixAssembler
 
 };
 
-StiffnessMatrixAssembler::StiffnessMatrixAssembler(const FemContext& ctx, ShapeFunctionFactory& shapeFunctionFactory)
+StiffnessMatrixAssembler::StiffnessMatrixAssembler(const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory)
     : ctx(ctx)
     , shapeFunctionFactory(shapeFunctionFactory)
     , basisFunctionIndexer(BasisFunctionIndexer(ctx))
@@ -134,7 +135,6 @@ void StiffnessMatrixAssembler::symmetrize()
 
 void StiffnessMatrixAssembler::precomputeIntegrals(ElementType elementType)
 {
-    shapeFunctionFactory.precomputeShapeFunctions(elementType, ctx.p);
     auto& cache = integralCache[elementType];
     const uint32_t numOfShapeFunctions = shapeFunctionIndexer.getNumOfShapeFunctions(elementType);
     std::vector<ShapeFunctionDerivativePair> derivativePairs;
@@ -174,7 +174,7 @@ void StiffnessMatrixAssembler::precomputeIntegrals(ElementType elementType)
 }
 } // namespace
 
-MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx, ShapeFunctionFactory& shapeFunctionFactory)
+MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory)
 {
     StiffnessMatrixAssembler assembler(ctx, shapeFunctionFactory);
     assembler.assemble();
@@ -183,10 +183,11 @@ MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx, ShapeFunctionFactory& 
 
 MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx)
 {
+    const BasisFunctionFactory basisFunctionFactory(ctx);
     const BasisFunctionIndexer basisFunctionIndexer(ctx);
     const uint32_t numOfBasisFunctions = basisFunctionIndexer.getNumOfBasisFunctions();
     MatrixXmpq res(numOfBasisFunctions, numOfBasisFunctions);
-    const Mesh& mesh = *(ctx.mesh);
+    const Mesh& mesh = *ctx.mesh;
     for (int elementIdx = 0; elementIdx < mesh.getNumOfElements(); elementIdx++)
     {
         const Element& element = mesh.getElement(elementIdx);
@@ -201,10 +202,10 @@ MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx)
         {
             for (int shapeFunctionIdx2 = 0; shapeFunctionIdx2 < numOfShapeFunctions; shapeFunctionIdx2++)
             {
-                const Polynomial2D shapeFunction1Dx = basisFunctionIndexer.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx1, 'x');
-                const Polynomial2D shapeFunction1Dy = basisFunctionIndexer.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx1, 'y');
-                const Polynomial2D shapeFunction2Dx = basisFunctionIndexer.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx2, 'x');
-                const Polynomial2D shapeFunction2Dy = basisFunctionIndexer.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx2, 'y');
+                const Polynomial2D shapeFunction1Dx = basisFunctionFactory.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx1, 'x');
+                const Polynomial2D shapeFunction1Dy = basisFunctionFactory.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx1, 'y');
+                const Polynomial2D shapeFunction2Dx = basisFunctionFactory.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx2, 'x');
+                const Polynomial2D shapeFunction2Dy = basisFunctionFactory.getShapeFunctionDerivative(elementIdx, shapeFunctionIdx2, 'y');
                 mpq_class integral = 0;
                 integral += M(0,0) * integrateOverReferenceElement(shapeFunction1Dx * shapeFunction2Dx, element.getElementType());
                 integral += M(0,1) * integrateOverReferenceElement(shapeFunction1Dx * shapeFunction2Dy, element.getElementType());

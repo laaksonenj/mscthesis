@@ -1,4 +1,5 @@
 add_library(fem_basis_lib STATIC
+    BasisFunctionFactory.cpp
     BasisFunctionIndexer.cpp
     ShapeFunctionFactory.cpp
     ShapeFunctionIndexer.cpp
