@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <numbers>
 
 #include "fem/multiprecision/Arithmetic.hpp"
 
@@ -35,6 +36,6 @@ double log(const mpz_class& x)
     assert(x > 0);
     signed long int exp;
     const double d = mpz_get_d_2exp(&exp, x.get_mpz_t());
-    return std::log(d) + exp * std::log(2);
+    return std::log(d) + exp * std::numbers::ln2;
 }
 } // namespace fem
