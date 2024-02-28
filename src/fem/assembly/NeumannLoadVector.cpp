@@ -68,7 +68,7 @@ VectorXmpq assembleNeumannLoadVector(const FemContext& ctx,
             return g(r(t)) * v(r(t));
         };
         const uint32_t basisFunctionIdx = basisFunctionIndexer.getBasisFunctionIndex(elementIdx, shapeFunctionIdx);
-        res(basisFunctionIdx) = rGradNorm * integrateGaussLegendre(f, -1, 1, 100);
+        res(basisFunctionIdx) = rGradNorm * integrateGaussLegendre(f, -1, 1);
     }
     return res;
 }

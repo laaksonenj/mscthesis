@@ -42,6 +42,16 @@ Polynomial1D::Polynomial1D()
 {
 }
 
+mpq_class Polynomial1D::operator()(const mpq_class& t) const
+{
+    mpq_class res = 0;
+    for (const auto& monomial : getMonomials())
+    {
+        res += monomial(t);
+    }
+    return res;
+}
+
 Polynomial1D& Polynomial1D::operator+=(const Polynomial1D& rhs)
 {
     if (this != &rhs)

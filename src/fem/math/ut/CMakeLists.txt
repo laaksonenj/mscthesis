@@ -1,8 +1,6 @@
-add_unit_test(fem_math_test
+add_unit_test(fem_math_common_test
     SOURCES
         AffineMapTest.cpp
-        QuadratureTest.cpp
     LIBRARIES
-        fem_math_lib
-        GSL::gsl
+        fem_math_common_lib
 )

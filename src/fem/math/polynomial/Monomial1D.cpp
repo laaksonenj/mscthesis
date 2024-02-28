@@ -1,9 +1,15 @@
 #include <sstream>
 
 #include "fem/math/polynomial/Monomial1D.hpp"
+#include "fem/multiprecision/Arithmetic.hpp"
 
 namespace fem
 {
+mpq_class Monomial1D::operator()(const mpq_class& t) const
+{
+    return coefficient * pow(t, degree);
+}
+
 Monomial1D operator*(const Monomial1D& lhs, const Monomial1D& rhs)
 {
     return Monomial1D(lhs.coefficient * rhs.coefficient, lhs.degree + rhs.degree);

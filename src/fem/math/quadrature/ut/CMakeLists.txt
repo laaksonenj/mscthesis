@@ -1,0 +1,9 @@
+add_unit_test(fem_math_quadrature_test
+    SOURCES
+        Quadrature1DTest.cpp
+        Quadrature2DTest.cpp
+    LIBRARIES
+        fem_math_polynomial_lib
+        fem_math_quadrature_lib
+        fem_multiprecision_lib
+)

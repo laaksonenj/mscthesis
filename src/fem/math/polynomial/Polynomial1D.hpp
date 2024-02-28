@@ -25,6 +25,8 @@ public:
         return std::views::values(m_monomials);
     }
 
+    mpq_class operator()(const mpq_class& t) const;
+
     Polynomial1D& operator+=(const Polynomial1D& rhs);
     Polynomial1D& operator-=(const Polynomial1D& rhs);
     Polynomial1D& operator*=(const Polynomial1D& rhs);
