@@ -124,6 +124,18 @@ ShapeFunctionDescriptor ShapeFunctionIndexer::getShapeFunctionDescriptor(Element
     }
 }
 
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndex(ElementType elementType, const ShapeFunctionDescriptor& descriptor) const
+{
+    if (elementType == ElementType_Parallelogram)
+    {
+        return getShapeFunctionIndexQuad(descriptor);
+    }
+    else
+    {
+        return getShapeFunctionIndexTri(descriptor);
+    }
+}
+
 InternalShapeFunctionDescriptor ShapeFunctionIndexer::getInternalShapeFunctionDescriptor(ElementType elementType, uint32_t internalShapeFunctionIdx) const
 {
     if (elementType == ElementType_Parallelogram)
@@ -212,6 +224,46 @@ InternalShapeFunctionDescriptor ShapeFunctionIndexer::getInternalShapeFunctionDe
 InternalShapeFunctionDescriptor ShapeFunctionIndexer::getInternalShapeFunctionDescriptorQuadrilateralProduct(uint32_t internalShapeFunctionIdx) const
 {
     return InternalShapeFunctionDescriptor(internalShapeFunctionIdx / (m_p-1) + 2, internalShapeFunctionIdx % (m_p-1) + 2);
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexQuad(const ShapeFunctionDescriptor& desc) const
+{
+    return std::visit([this](const auto& arg) { return this->getShapeFunctionIndexQuad(arg); }, desc);
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexQuad(const NodalShapeFunctionDescriptor& desc) const
+{
+    return desc.nodeIdx;
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexQuad(const SideShapeFunctionDescriptor& desc) const
+{
+    return 4 + desc.sideIdx * (m_p - 1) + desc.k - 2;
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexQuad(const InternalShapeFunctionDescriptor& desc) const
+{
+    return 4 + 4 * (m_p - 1) + getInternalShapeFunctionIndexQuadrilateral(desc);
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexTri(const ShapeFunctionDescriptor& desc) const
+{
+    return std::visit([this](const auto& arg) { return this->getShapeFunctionIndexTri(arg); }, desc);
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexTri(const NodalShapeFunctionDescriptor& desc) const
+{
+    return desc.nodeIdx;
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexTri(const SideShapeFunctionDescriptor& desc) const
+{
+    return 3 + desc.sideIdx * (m_p - 1) + desc.k - 2;
+}
+
+uint32_t ShapeFunctionIndexer::getShapeFunctionIndexTri(const InternalShapeFunctionDescriptor& desc) const
+{
+    return 3 + 3 * (m_p - 1) + getInternalShapeFunctionIndexTriangle(desc);
 }
 
 uint32_t ShapeFunctionIndexer::getInternalShapeFunctionIndexTriangle(const InternalShapeFunctionDescriptor& desc) const

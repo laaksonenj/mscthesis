@@ -25,13 +25,17 @@ TEST(ShapeFunctionIndexerTest, TriangleTrunkSpace)
         EXPECT_EQ(descs.size(), indexer.getNumOfShapeFunctions(et));
         for (int nodeIdx = 0; nodeIdx < 3; nodeIdx++)
         {
-            EXPECT_TRUE(descs.contains(NodalShapeFunctionDescriptor(nodeIdx)));
+            const NodalShapeFunctionDescriptor desc(nodeIdx);
+            EXPECT_TRUE(descs.contains(desc));
+            EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), nodeIdx);
         }
         for (int sideIdx = 0; sideIdx < 3; sideIdx++)
         {
             for (int k = 2; k <= p; k++)
             {
-                EXPECT_TRUE(descs.contains(SideShapeFunctionDescriptor(sideIdx, k)));
+                const SideShapeFunctionDescriptor desc(sideIdx, k);
+                EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 3 + sideIdx * (p-1) + k-2);
             }
         }
         uint32_t internalShapeFunctionIndex = 0;
@@ -41,6 +45,7 @@ TEST(ShapeFunctionIndexerTest, TriangleTrunkSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 3 + 3*(p-1) + internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
                 internalShapeFunctionIndex++;
@@ -68,13 +73,17 @@ TEST(ShapeFunctionIndexerTest, TriangleProductSpace)
         EXPECT_EQ(descs.size(), indexer.getNumOfShapeFunctions(et));
         for (int nodeIdx = 0; nodeIdx < 3; nodeIdx++)
         {
-            EXPECT_TRUE(descs.contains(NodalShapeFunctionDescriptor(nodeIdx)));
+            const NodalShapeFunctionDescriptor desc(nodeIdx);
+            EXPECT_TRUE(descs.contains(desc));
+            EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), nodeIdx);
         }
         for (int sideIdx = 0; sideIdx < 3; sideIdx++)
         {
             for (int k = 2; k <= p; k++)
             {
-                EXPECT_TRUE(descs.contains(SideShapeFunctionDescriptor(sideIdx, k)));
+                const SideShapeFunctionDescriptor desc(sideIdx, k);
+                EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 3 + sideIdx * (p-1) + k-2);
             }
         }
         uint32_t internalShapeFunctionIndex = 0;
@@ -84,6 +93,7 @@ TEST(ShapeFunctionIndexerTest, TriangleProductSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 3 + 3 * (p-1) + internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
                 internalShapeFunctionIndex++;
@@ -112,13 +122,17 @@ TEST(ShapeFunctionIndexerTest, QuadrilateralTrunkSpace)
         EXPECT_EQ(descs.size(), indexer.getNumOfShapeFunctions(et));
         for (int nodeIdx = 0; nodeIdx < 4; nodeIdx++)
         {
-            EXPECT_TRUE(descs.contains(NodalShapeFunctionDescriptor(nodeIdx)));
+            const NodalShapeFunctionDescriptor desc(nodeIdx);
+            EXPECT_TRUE(descs.contains(desc));
+            EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), nodeIdx);
         }
         for (int sideIdx = 0; sideIdx < 4; sideIdx++)
         {
             for (int k = 2; k <= p; k++)
             {
-                EXPECT_TRUE(descs.contains(SideShapeFunctionDescriptor(sideIdx, k)));
+                const SideShapeFunctionDescriptor desc(sideIdx, k);
+                EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 4 + sideIdx * (p-1) + k-2);
             }
         }
         uint32_t internalShapeFunctionIndex = 0;
@@ -128,6 +142,7 @@ TEST(ShapeFunctionIndexerTest, QuadrilateralTrunkSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 4 + 4*(p-1) + internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
                 internalShapeFunctionIndex++;
@@ -155,13 +170,17 @@ TEST(ShapeFunctionIndexerTest, QuadrilateralProductSpace)
         EXPECT_EQ(descs.size(), indexer.getNumOfShapeFunctions(et));
         for (int nodeIdx = 0; nodeIdx < 4; nodeIdx++)
         {
-            EXPECT_TRUE(descs.contains(NodalShapeFunctionDescriptor(nodeIdx)));
+            const NodalShapeFunctionDescriptor desc(nodeIdx);
+            EXPECT_TRUE(descs.contains(desc));
+            EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), nodeIdx);
         }
         for (int sideIdx = 0; sideIdx < 4; sideIdx++)
         {
             for (int k = 2; k <= p; k++)
             {
-                EXPECT_TRUE(descs.contains(SideShapeFunctionDescriptor(sideIdx, k)));
+                const SideShapeFunctionDescriptor desc(sideIdx, k);
+                EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 4 + sideIdx * (p-1) + k-2);
             }
         }
         uint32_t internalShapeFunctionIndex = 0;
@@ -171,6 +190,7 @@ TEST(ShapeFunctionIndexerTest, QuadrilateralProductSpace)
             {
                 const InternalShapeFunctionDescriptor desc(k, l);
                 EXPECT_TRUE(descs.contains(desc));
+                EXPECT_EQ(indexer.getShapeFunctionIndex(et, desc), 4 + 4*(p-1) + internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionIndex(et, desc), internalShapeFunctionIndex);
                 EXPECT_EQ(indexer.getInternalShapeFunctionDescriptor(et, internalShapeFunctionIndex), desc);
                 internalShapeFunctionIndex++;

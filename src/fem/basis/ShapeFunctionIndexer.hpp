@@ -20,6 +20,7 @@ public:
     uint32_t getNumOfShapeFunctions(ElementType elementType) const;
 
     ShapeFunctionDescriptor getShapeFunctionDescriptor(ElementType elementType, uint32_t shapeFunctionIdx) const;
+    uint32_t getShapeFunctionIndex(ElementType elementType, const ShapeFunctionDescriptor& descriptor) const;
     InternalShapeFunctionDescriptor getInternalShapeFunctionDescriptor(ElementType elementType, uint32_t internalShapeFunctionIdx) const;
     uint32_t getInternalShapeFunctionIndex(ElementType elementType, const InternalShapeFunctionDescriptor& descriptor) const;
 
@@ -31,6 +32,16 @@ private:
     InternalShapeFunctionDescriptor getInternalShapeFunctionDescriptorQuadrilateral(uint32_t internalShapeFunctionIdx) const;
     InternalShapeFunctionDescriptor getInternalShapeFunctionDescriptorQuadrilateralTrunk(uint32_t internalShapeFunctionIdx) const;
     InternalShapeFunctionDescriptor getInternalShapeFunctionDescriptorQuadrilateralProduct(uint32_t internalShapeFunctionIdx) const;
+
+    uint32_t getShapeFunctionIndexQuad(const ShapeFunctionDescriptor& desc) const;
+    uint32_t getShapeFunctionIndexQuad(const NodalShapeFunctionDescriptor& desc) const;
+    uint32_t getShapeFunctionIndexQuad(const SideShapeFunctionDescriptor& desc) const;
+    uint32_t getShapeFunctionIndexQuad(const InternalShapeFunctionDescriptor& desc) const;
+
+    uint32_t getShapeFunctionIndexTri(const ShapeFunctionDescriptor& desc) const;
+    uint32_t getShapeFunctionIndexTri(const NodalShapeFunctionDescriptor& desc) const;
+    uint32_t getShapeFunctionIndexTri(const SideShapeFunctionDescriptor& desc) const;
+    uint32_t getShapeFunctionIndexTri(const InternalShapeFunctionDescriptor& desc) const;
 
     uint32_t getInternalShapeFunctionIndexTriangle(const InternalShapeFunctionDescriptor& desc) const;
     uint32_t getInternalShapeFunctionIndexTriangleTrunk(const InternalShapeFunctionDescriptor& desc) const;
