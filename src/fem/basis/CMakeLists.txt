@@ -1,6 +1,7 @@
 add_library(fem_basis_lib STATIC
     BasisFunctionFactory.cpp
     BasisFunctionIndexer.cpp
+    ShapeFunctionEvaluator.cpp
     ShapeFunctionFactory.cpp
     ShapeFunctionIndexer.cpp
     #TrialFunction.cpp

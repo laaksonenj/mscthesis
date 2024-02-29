@@ -19,8 +19,9 @@ public:
     const Polynomial2D& getShapeFunction(ElementType elementType, const ShapeFunctionDescriptor& descriptor) const;
     const Polynomial2D& getShapeFunctionDerivative(ElementType elementType, const ShapeFunctionDescriptor& descriptor, char variable) const;
 
-private:
+    const auto& getShapeFunctions(ElementType elementType) const { return m_shapeFunctions[elementType]; }
 
+private:
     void createQuadShapeFunctions(int p);
     void createTriShapeFunctions(int p);
     void createLegendrePolynomials(int p);
