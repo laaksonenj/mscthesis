@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <utility>
+#include <ranges>
 #include <vector>
 
 #include "fem/multiprecision/Types.hpp"
@@ -11,14 +11,20 @@ namespace fem
 class GaussLegendreTableTriangle
 {
 public:
-    const auto& getWeightAbscissaPairs() const { return m_weightAbscissaPairs; }
+    auto getWeightAbscissaPairs() const
+    {
+        return std::views::zip(m_weights, m_abscissas) | std::views::as_const;
+    }
+
+    const auto& getAbscissas() const { return m_abscissas; }
 
 protected:
     GaussLegendreTableTriangle() = default;
     ~GaussLegendreTableTriangle() = default;
 
 protected:
-    std::vector<std::pair<mpq_class, Vector2mpq>> m_weightAbscissaPairs;
+    std::vector<mpq_class> m_weights;
+    std::vector<Vector2mpq> m_abscissas;
 };
 
 class GaussLegendreTableTriangleQuadMapped : public GaussLegendreTableTriangle
@@ -33,6 +39,7 @@ public:
     explicit GaussLegendreTableTriangleCrowdingFree(uint32_t n);
 };
 
-inline GaussLegendreTableTriangleQuadMapped glTableTriQuadMapped100{100};
-inline GaussLegendreTableTriangleCrowdingFree glTableTriCrowdingFree100{100};
+inline const GaussLegendreTableTriangleQuadMapped glTableTriQuadMapped100{100};
+inline const GaussLegendreTableTriangleCrowdingFree glTableTriCrowdingFree100{100};
+inline const GaussLegendreTableTriangle& defaultGLTableTri = glTableTriCrowdingFree100;
 } // namespace fem

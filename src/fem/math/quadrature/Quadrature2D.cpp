@@ -13,8 +13,10 @@ mpq_class doQuadrature(const BivariateFunction& f, const Element& element, const
     {
         return f(F(x));
     };
-    for (const auto& [w, x] : table.getWeightAbscissaPairs())
+    for (const auto elem : table.getWeightAbscissaPairs())
     {
+        const mpq_class& w = std::get<0>(elem);
+        const Vector2mpq& x = std::get<1>(elem);
         res += w * g(x);
     }
     res *= F.A.determinant();

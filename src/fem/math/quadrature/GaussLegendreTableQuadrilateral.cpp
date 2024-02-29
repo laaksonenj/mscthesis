@@ -7,11 +7,16 @@ namespace fem
 GaussLegendreTableQuadrilateral::GaussLegendreTableQuadrilateral(uint32_t n)
 {
     const GaussLegendreTable1D t(n);
-    for (const auto& [wi, xi] : t.getWeightAbscissaPairs())
+    for (const auto elem1 : t.getWeightAbscissaPairs())
     {
-        for (const auto& [wj, xj] : t.getWeightAbscissaPairs())
+        const mpq_class& wi = std::get<0>(elem1);
+        const mpq_class& xi = std::get<1>(elem1);
+        for (const auto elem2 : t.getWeightAbscissaPairs())
         {
-            m_weightAbscissaPairs.emplace_back(wi * wj, Vector2mpq{xi, xj});
+            const mpq_class& wj = std::get<0>(elem2);
+            const mpq_class& xj = std::get<1>(elem2);
+            m_weights.push_back(wi * wj);
+            m_abscissas.push_back(Vector2mpq{xi, xj});
         }
     }
 }
