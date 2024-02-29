@@ -14,7 +14,7 @@ void checkNearElementwise(const VectorXmpq& lhs, const VectorXmpq& rhs)
     EXPECT_EQ(lhs.size(), rhs.size());
     for (int i = 0; i < lhs.size(); i++)
     {
-        EXPECT_NEAR(lhs(i).get_d(), rhs(i).get_d(), 1e-7);
+        EXPECT_NEAR(lhs(i).get_d(), rhs(i).get_d(), 1e-10);
     }
 }
 } // namespace
