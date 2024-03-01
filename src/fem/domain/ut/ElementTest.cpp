@@ -129,4 +129,99 @@ TEST(ElementTest, IsPointInsideElement)
     EXPECT_FALSE(isPointInsideElement({mpq_class("9/4"), mpq_class("9/4")}, quad));
     EXPECT_FALSE(isPointInsideElement({mpq_class("9/4"), mpq_class("9/4")}, tri));
 }
+
+TEST(ElementTest, SubdivideParallelogram)
+{
+    const Parallelogram quad(Node(-2, -1), Node(1, -1), Node(2, 1), Node(-1, 1));
+
+    const auto subdivision1 = quad.subdivide(Vector2mpq{0, 0});
+    ASSERT_EQ(subdivision1.size(), 4);
+    EXPECT_EQ(*subdivision1.at(0), Parallelogram(Node("-1/2", "-1"), Node(0, 0), Node("-3/2", "0"), Node(-2, -1)));
+    EXPECT_EQ(*subdivision1.at(1), Parallelogram(Node("3/2", "0"), Node(0, 0), Node("-1/2", "-1"), Node(1, -1)));
+    EXPECT_EQ(*subdivision1.at(2), Parallelogram(Node("1/2", "1"), Node(0, 0), Node("3/2", "0"), Node(2, 1)));
+    EXPECT_EQ(*subdivision1.at(3), Parallelogram(Node("-3/2", "0"), Node(0, 0), Node("1/2", "1"), Node(-1, 1)));
+
+    const auto subdivision2 = quad.subdivide(Vector2mpq{"1/2", "-1"});
+    ASSERT_EQ(subdivision2.size(), 2);
+    EXPECT_EQ(*subdivision2.at(0), Parallelogram(Node(-2, -1), Node("1/2", "-1"), Node("3/2", "1"), Node(-1, 1)));
+    EXPECT_EQ(*subdivision2.at(1), Parallelogram(Node("3/2", "1"), Node("1/2", "-1"), Node(1, -1), Node(2, 1)));
+
+    const auto subdivision3 = quad.subdivide(Vector2mpq{"7/4", "1/2"});
+    ASSERT_EQ(subdivision3.size(), 2);
+    EXPECT_EQ(*subdivision3.at(0), Parallelogram(Node(1, -1), Node("7/4", "1/2"), Node("-5/4", "1/2"), Node(-2, -1)));
+    EXPECT_EQ(*subdivision3.at(1), Parallelogram(Node("-5/4", "1/2"), Node("7/4", "1/2"), Node(2, 1), Node(-1, 1)));
+
+    const auto subdivision4 = quad.subdivide(Vector2mpq{0, 1});
+    ASSERT_EQ(subdivision4.size(), 2);
+    EXPECT_EQ(*subdivision4.at(0), Parallelogram(Node(2, 1), Node(0, 1), Node(-1, -1), Node(1, -1)));
+    EXPECT_EQ(*subdivision4.at(1), Parallelogram(Node(-1, -1), Node(0, 1), Node(-1, 1), Node(-2, -1)));
+
+    const auto subdivision5 = quad.subdivide(Vector2mpq{"-3/2", "0"});
+    ASSERT_EQ(subdivision5.size(), 2);
+    EXPECT_EQ(*subdivision5.at(0), Parallelogram(Node(-1, 1), Node("-3/2", "0"), Node("3/2", "0"), Node(2, 1)));
+    EXPECT_EQ(*subdivision5.at(1), Parallelogram(Node("3/2", "0"), Node("-3/2", "0"), Node(-2, -1), Node(1, -1)));
+
+    const auto subdivision6 = quad.subdivide(Vector2mpq{2, 1});
+    ASSERT_EQ(subdivision6.size(), 1);
+    EXPECT_EQ(*subdivision6.at(0), quad);
+
+    const auto subdivision7 = quad.subdivide(Vector2mpq{-1, 1});
+    ASSERT_EQ(subdivision7.size(), 1);
+    EXPECT_EQ(*subdivision7.at(0), quad);
+
+    const auto subdivision8 = quad.subdivide(Vector2mpq{-2, -1});
+    ASSERT_EQ(subdivision8.size(), 1);
+    EXPECT_EQ(*subdivision8.at(0), quad);
+
+    const auto subdivision9 = quad.subdivide(Vector2mpq{1, -1});
+    ASSERT_EQ(subdivision9.size(), 1);
+    EXPECT_EQ(*subdivision9.at(0), quad);
+}
+
+TEST(ElementTest, SubdivideTriangle)
+{
+    const Triangle tri(Node(0, 0), Node(1, 0), Node(0, 1));
+
+    const auto subdivision1 = tri.subdivide(Vector2mpq{"1/2", "1/4"});
+    ASSERT_EQ(subdivision1.size(), 3);
+    EXPECT_EQ(*subdivision1.at(0), Triangle(Node(0, 0), Node("1/2", "1/4"), Node(0, 1)));
+    EXPECT_EQ(*subdivision1.at(1), Triangle(Node(1, 0), Node("1/2", "1/4"), Node(0, 0)));
+    EXPECT_EQ(*subdivision1.at(2), Triangle(Node(0, 1), Node("1/2", "1/4"), Node(1, 0)));
+
+    const auto subdivision2 = tri.subdivide(Vector2mpq{"1/2", "1/2"});
+    ASSERT_EQ(subdivision2.size(), 2);
+    EXPECT_EQ(*subdivision2.at(0), Triangle(Node(1, 0), Node("1/2", "1/2"), Node(0, 0)));
+    EXPECT_EQ(*subdivision2.at(1), Triangle(Node(0, 0), Node("1/2", "1/2"), Node(0, 1)));
+
+    const auto subdivision3 = tri.subdivide(Vector2mpq{"0", "3/4"});
+    ASSERT_EQ(subdivision3.size(), 2);
+    EXPECT_EQ(*subdivision3.at(0), Triangle(Node(0, 1), Node("0", "3/4"), Node(1, 0)));
+    EXPECT_EQ(*subdivision3.at(1), Triangle(Node(1, 0), Node("0", "3/4"), Node(0, 0)));
+
+    const auto subdivision4 = tri.subdivide(Vector2mpq{"1/2", "0"});
+    ASSERT_EQ(subdivision4.size(), 2);
+    EXPECT_EQ(*subdivision4.at(0), Triangle(Node(0, 0), Node("1/2", "0"), Node(0, 1)));
+    EXPECT_EQ(*subdivision4.at(1), Triangle(Node(0, 1), Node("1/2", "0"), Node(1, 0)));
+
+    const auto subdivision5 = tri.subdivide(Vector2mpq{0, 0});
+    ASSERT_EQ(subdivision5.size(), 1);
+    EXPECT_EQ(*subdivision5.at(0), tri);
+
+    const auto subdivision6 = tri.subdivide(Vector2mpq{1, 0});
+    ASSERT_EQ(subdivision6.size(), 1);
+    EXPECT_EQ(*subdivision6.at(0), tri);
+
+    const auto subdivision7 = tri.subdivide(Vector2mpq{0, 1});
+    ASSERT_EQ(subdivision7.size(), 1);
+    EXPECT_EQ(*subdivision7.at(0), tri);
+}
+
+TEST(ElementTest, SubdivideAbortsIfPointOutsideElement)
+{
+    const Parallelogram quad(Node(-2, -1), Node(1, -1), Node(2, 1), Node(-1, 1));
+    EXPECT_DEATH(quad.subdivide(Vector2mpq{3, 0}), ".*");
+
+    const Triangle tri(Node(0, 0), Node(1, 0), Node(0, 1));
+    EXPECT_DEATH(tri.subdivide(Vector2mpq{-1, 0}), ".*");
+}
 } // namespace fem::ut

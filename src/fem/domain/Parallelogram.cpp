@@ -25,4 +25,58 @@ AffineMap Parallelogram::getReferenceElementMap() const
 
     return compose(F, G);
 }
+
+std::vector<std::unique_ptr<Element>> Parallelogram::subdivideImpl(const Vector2mpq& x) const
+{
+    std::vector<std::unique_ptr<Element>> res{};
+    const AffineMap F = getReferenceElementMap();
+    const AffineMap Finv = F.inverse();
+    const Vector2mpq xloc = Finv(x);
+    const bool pointIsInside = abs(xloc(0)) != 1 && abs(xloc(1)) != 1;
+    const bool pointIsOnSide = (abs(xloc(0)) == 1 && abs(xloc(1)) != 1) || (abs(xloc(1)) == 1 && abs(xloc(0)) != 1);
+    if (pointIsInside)
+    {
+        const mpq_class tx = (xloc(0) + 1) / 2;
+        const mpq_class ty = (xloc(1) + 1) / 2;
+        const Vector2mpq dx = m_nodes[1] - m_nodes[0];
+        const Vector2mpq dy = m_nodes[3] - m_nodes[0];
+        const Vector2mpq n0 = m_nodes[0] + tx * dx;
+        const Vector2mpq n1 = m_nodes[1] + ty * dy;
+        const Vector2mpq n2 = m_nodes[3] + tx * dx;
+        const Vector2mpq n3 = m_nodes[0] + ty * dy;
+        res.push_back(std::make_unique<Parallelogram>(n0, x, n3, m_nodes[0]));
+        res.push_back(std::make_unique<Parallelogram>(n1, x, n0, m_nodes[1]));
+        res.push_back(std::make_unique<Parallelogram>(n2, x, n1, m_nodes[2]));
+        res.push_back(std::make_unique<Parallelogram>(n3, x, n2, m_nodes[3]));
+    }
+    else if (pointIsOnSide)
+    {
+        uint32_t sideIdx;
+        if (xloc(1) == -1)
+        {
+            sideIdx = 0;
+        }
+        else if (xloc(0) == 1)
+        {
+            sideIdx = 1;
+        }
+        else if (xloc(1) == 1)
+        {
+            sideIdx = 2;
+        }
+        else
+        {
+            sideIdx = 3;
+        }
+        const Vector2mpq d = m_nodes[(sideIdx + 2) % 4] - m_nodes[(sideIdx + 1) % 4];
+        const Vector2mpq n0 = x + d;
+        res.push_back(std::make_unique<Parallelogram>(m_nodes[sideIdx], x, n0, m_nodes[(sideIdx + 3) % 4]));
+        res.push_back(std::make_unique<Parallelogram>(n0, x, m_nodes[(sideIdx + 1) % 4], m_nodes[(sideIdx + 2) % 4]));
+    }
+    else
+    {
+        res.push_back(std::make_unique<Parallelogram>(*this));
+    }
+    return res;
+}
 } // namespace fem

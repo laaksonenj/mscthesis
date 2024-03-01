@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "fem/domain/Node.hpp"
 #include "fem/domain/Side.hpp"
 #include "fem/math/AffineMap.hpp"
+#include "fem/multiprecision/Types.hpp"
 
 namespace fem
 {
@@ -26,6 +28,10 @@ public:
     virtual AffineMap getReferenceElementMap() const = 0;
     uint32_t getNumOfSides() const { return getNumOfNodes(); }
     Side getSide(uint32_t sideIdx) const;
+    std::vector<std::unique_ptr<Element>> subdivide(const Vector2mpq& x) const;
+
+private:
+    virtual std::vector<std::unique_ptr<Element>> subdivideImpl(const Vector2mpq& x) const = 0;
 };
 
 bool areIntersecting(const Element& element1, const Element& element2);

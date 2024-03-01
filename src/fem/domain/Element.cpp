@@ -14,6 +14,12 @@ Side Element::getSide(uint32_t sideIdx) const
     return Side(a, b);
 }
 
+std::vector<std::unique_ptr<Element>> Element::subdivide(const Vector2mpq& x) const
+{
+    assert(isPointInsideElement(x, *this));
+    return subdivideImpl(x);
+}
+
 bool operator==(const Element& lhs, const Element& rhs)
 {
     if (lhs.getNumOfNodes() != rhs.getNumOfNodes())

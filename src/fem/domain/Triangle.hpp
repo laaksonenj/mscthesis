@@ -18,6 +18,9 @@ public:
     AffineMap getReferenceElementMap() const override;
 
 private:
+    std::vector<std::unique_ptr<Element>> subdivideImpl(const Vector2mpq& x) const override;
+
+private:
     std::array<Node, 3> m_nodes;
 };
 } // namespace fem
