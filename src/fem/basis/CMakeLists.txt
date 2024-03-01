@@ -4,7 +4,7 @@ add_library(fem_basis_lib STATIC
     ShapeFunctionEvaluator.cpp
     ShapeFunctionFactory.cpp
     ShapeFunctionIndexer.cpp
-    #TrialFunction.cpp
+    TrialFunction.cpp
 )
 
 target_include_directories(fem_basis_lib
