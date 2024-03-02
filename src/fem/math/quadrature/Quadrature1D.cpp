@@ -1,5 +1,7 @@
 #include "fem/math/quadrature/Quadrature1D.hpp"
 
+#include <ranges>
+
 namespace fem
 {
 mpq_class integrateGaussLegendre(const UnivariateFunction& f, const mpq_class& a, const mpq_class& b, const GaussLegendreTable1D& glTable)
@@ -9,10 +11,8 @@ mpq_class integrateGaussLegendre(const UnivariateFunction& f, const mpq_class& a
     {
         return f(((1-t)/2)*a + ((1+t)/2)*b);
     };
-    for (const auto elem : glTable.getWeightAbscissaPairs())
+    for (auto [w, x] : std::views::zip(glTable.getWeights(), glTable.getAbscissas()))
     {
-        const mpq_class& w = std::get<0>(elem);
-        const mpq_class& x = std::get<1>(elem);
         res += w * g(x);
     }
     res *= (b-a)/2;

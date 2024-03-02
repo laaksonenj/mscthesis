@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <ranges>
 #include <vector>
 
 #include "fem/multiprecision/Types.hpp"
@@ -11,11 +10,7 @@ namespace fem
 class GaussLegendreTableTriangle
 {
 public:
-    auto getWeightAbscissaPairs() const
-    {
-        return std::views::zip(m_weights, m_abscissas) | std::views::as_const;
-    }
-
+    const auto& getWeights() const { return m_weights; }
     const auto& getAbscissas() const { return m_abscissas; }
 
 protected:
