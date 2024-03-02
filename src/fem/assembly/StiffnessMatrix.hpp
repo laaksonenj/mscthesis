@@ -9,7 +9,7 @@
 namespace fem
 {
 MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory);
-MatrixXmpq extractSubStiffnessMatrix(const MatrixXmpq& stiffnessMatrix, const FemContext& ctx, uint32_t p);
+MatrixXmpq extractSubStiffnessMatrix(const FemContext& ctx, const MatrixXmpq& stiffnessMatrix, uint32_t p);
 
 /* Slow reference implementation */
 MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx);

@@ -19,7 +19,7 @@ TEST(LoadVectorTest, ExtractSubLoadVector)
         {
             const FemContext subCtx(mesh, p, polynomialSpaceType);
             const VectorXmpq subLoadVector = assembleDiracLoadVector(subCtx, x_0);
-            EXPECT_EQ(extractSubLoadVector(loadVector, ctx, p), subLoadVector);
+            EXPECT_EQ(extractSubLoadVector(ctx, loadVector, p), subLoadVector);
         }
     }
 }

@@ -41,19 +41,19 @@ protected:
 
 TEST_F(TrialFunctionTest, EvaluateTrialFunction)
 {
-    EXPECT_EQ(evaluateTrialFunction(coefficients, ctx, {mpq_class("1/2"), mpq_class("-1/5")}), mpq_class("-141/200"));
-    EXPECT_EQ(evaluateTrialFunction(coefficients, ctx, {mpq_class("-3/8"), mpq_class("1")}), mpq_class("1445/512"));
-    EXPECT_EQ(evaluateTrialFunction(coefficients, ctx, {mpq_class("0"), mpq_class("2")}), mpq_class("1/2"));
+    EXPECT_EQ(evaluateTrialFunction(ctx, coefficients, {mpq_class("1/2"), mpq_class("-1/5")}), mpq_class("-141/200"));
+    EXPECT_EQ(evaluateTrialFunction(ctx, coefficients, {mpq_class("-3/8"), mpq_class("1")}), mpq_class("1445/512"));
+    EXPECT_EQ(evaluateTrialFunction(ctx, coefficients, {mpq_class("0"), mpq_class("2")}), mpq_class("1/2"));
 
-    EXPECT_EQ(evaluateTrialFunction(coefficients, ctx, {mpq_class("1/2"), mpq_class("-1/5")}, shapeFunctionEvaluator), mpq_class("-141/200"));
-    EXPECT_EQ(evaluateTrialFunction(coefficients, ctx, {mpq_class("-3/8"), mpq_class("1")}, shapeFunctionEvaluator), mpq_class("1445/512"));
-    EXPECT_EQ(evaluateTrialFunction(coefficients, ctx, {mpq_class("0"), mpq_class("2")}, shapeFunctionEvaluator), mpq_class("1/2"));
+    EXPECT_EQ(evaluateTrialFunction(ctx, coefficients, {mpq_class("1/2"), mpq_class("-1/5")}, shapeFunctionEvaluator), mpq_class("-141/200"));
+    EXPECT_EQ(evaluateTrialFunction(ctx, coefficients, {mpq_class("-3/8"), mpq_class("1")}, shapeFunctionEvaluator), mpq_class("1445/512"));
+    EXPECT_EQ(evaluateTrialFunction(ctx, coefficients, {mpq_class("0"), mpq_class("2")}, shapeFunctionEvaluator), mpq_class("1/2"));
 }
 
 TEST_F(TrialFunctionTest, IntegrateTrialFunction)
 {
-    EXPECT_EQ(integrateTrialFunction(coefficients, ctx), mpq_class("55/36") + mpq_class("1/12"));
-    EXPECT_EQ(integrateTrialFunction(coefficients, ctx, shapeFunctionFactory), mpq_class("55/36") + mpq_class("1/12"));
+    EXPECT_EQ(integrateTrialFunction(ctx, coefficients), mpq_class("55/36") + mpq_class("1/12"));
+    EXPECT_EQ(integrateTrialFunction(ctx, coefficients, shapeFunctionFactory), mpq_class("55/36") + mpq_class("1/12"));
 
     coefficients = VectorXmpq(basisFunctionIndexer.getNumOfBasisFunctions());
     coefficients(0) = 1;
@@ -61,14 +61,14 @@ TEST_F(TrialFunctionTest, IntegrateTrialFunction)
     coefficients(2) = 1;
     coefficients(3) = 1;
     coefficients(4) = 1;
-    EXPECT_EQ(integrateTrialFunction(coefficients, ctx), mpq_class("5"));
-    EXPECT_EQ(integrateTrialFunction(coefficients, ctx, shapeFunctionFactory), mpq_class("5"));
+    EXPECT_EQ(integrateTrialFunction(ctx, coefficients), mpq_class("5"));
+    EXPECT_EQ(integrateTrialFunction(ctx, coefficients, shapeFunctionFactory), mpq_class("5"));
 }
 
 TEST_F(TrialFunctionTest, NormalizeTrialFunction)
 {
-    normalizeTrialFunction(coefficients, ctx, shapeFunctionFactory);
-    EXPECT_EQ(integrateTrialFunction(coefficients, ctx), 0);
-    EXPECT_EQ(integrateTrialFunction(coefficients, ctx, shapeFunctionFactory), 0);
+    normalizeTrialFunction(ctx, coefficients, shapeFunctionFactory);
+    EXPECT_EQ(integrateTrialFunction(ctx, coefficients), 0);
+    EXPECT_EQ(integrateTrialFunction(ctx, coefficients, shapeFunctionFactory), 0);
 }
 } // namespace fem::ut

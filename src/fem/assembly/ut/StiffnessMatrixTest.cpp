@@ -60,7 +60,7 @@ TEST(StiffnessMatrixTest, ExtractSubStiffnessMatrix)
         {
             const FemContext subCtx(mesh, p, polynomialSpaceType);
             const MatrixXmpq subStiffnessMatrix = assembleStiffnessMatrix(subCtx);
-            EXPECT_EQ(extractSubStiffnessMatrix(stiffnessMatrix, ctx, p), subStiffnessMatrix);
+            EXPECT_EQ(extractSubStiffnessMatrix(ctx, stiffnessMatrix, p), subStiffnessMatrix);
         }
     }
 }

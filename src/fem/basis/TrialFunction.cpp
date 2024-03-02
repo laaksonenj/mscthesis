@@ -6,7 +6,7 @@
 
 namespace fem
 {
-mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x, const ShapeFunctionEvaluator& shapeFunctionEvaluator)
+mpq_class evaluateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients, const Vector2mpq& x, const ShapeFunctionEvaluator& shapeFunctionEvaluator)
 {
     mpq_class res = 0;
     const BasisFunctionIndexer basisFunctionIndexer(ctx);
@@ -34,7 +34,7 @@ mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext
     return res;
 }
 
-mpq_class integrateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory)
+mpq_class integrateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients, const ShapeFunctionFactory& shapeFunctionFactory)
 {
     mpq_class res = 0;
     const BasisFunctionIndexer basisFunctionIndexer(ctx);
@@ -65,18 +65,18 @@ mpq_class integrateTrialFunction(const VectorXmpq& coefficients, const FemContex
     return res;
 }
 
-void normalizeTrialFunction(VectorXmpq& coefficients, const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory)
+void normalizeTrialFunction(const FemContext& ctx, VectorXmpq& coefficients, const ShapeFunctionFactory& shapeFunctionFactory)
 {
     const Mesh& mesh = *ctx.mesh;
     const mpq_class areaOfMesh = calculateMeshArea(mesh);
-    const mpq_class normalizationConst = integrateTrialFunction(coefficients, ctx, shapeFunctionFactory) / areaOfMesh;
+    const mpq_class normalizationConst = integrateTrialFunction(ctx, coefficients, shapeFunctionFactory) / areaOfMesh;
     for (int nodeIdx = 0; nodeIdx < mesh.getNumOfNodes(); nodeIdx++)
     {
         coefficients(nodeIdx) -= normalizationConst;
     }
 }
 
-mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x)
+mpq_class evaluateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients, const Vector2mpq& x)
 {
     mpq_class res = 0;
     const BasisFunctionFactory basisFunctionFactory(ctx);
@@ -94,7 +94,7 @@ mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext
     return res;
 }
 
-mpq_class integrateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx)
+mpq_class integrateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients)
 {
     mpq_class res = 0;
     const BasisFunctionFactory basisFunctionFactory(ctx);

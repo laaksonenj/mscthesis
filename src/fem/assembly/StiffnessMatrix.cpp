@@ -220,7 +220,7 @@ MatrixXmpq assembleStiffnessMatrix(const FemContext& ctx)
     return res;
 }
 
-MatrixXmpq extractSubStiffnessMatrix(const MatrixXmpq& stiffnessMatrix, const FemContext& ctx, uint32_t p)
+MatrixXmpq extractSubStiffnessMatrix(const FemContext& ctx, const MatrixXmpq& stiffnessMatrix, uint32_t p)
 {
     assert(p >= 1 && p <= ctx.p);
     const BasisFunctionIndexer superBasisFunctionIndexer(ctx);

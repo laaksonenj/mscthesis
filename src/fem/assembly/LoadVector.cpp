@@ -6,7 +6,7 @@
 
 namespace fem
 {
-VectorXmpq extractSubLoadVector(const VectorXmpq& loadVector, const FemContext& ctx, uint32_t p)
+VectorXmpq extractSubLoadVector(const FemContext& ctx, const VectorXmpq& loadVector, uint32_t p)
 {
     assert(p >= 1 && p <= ctx.p);
     const BasisFunctionIndexer superBasisFunctionIndexer(ctx);

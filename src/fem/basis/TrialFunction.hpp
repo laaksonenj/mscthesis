@@ -7,11 +7,11 @@
 
 namespace fem
 {
-mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x, const ShapeFunctionEvaluator& shapeFunctionEvaluator);
-mpq_class integrateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory);
-void normalizeTrialFunction(VectorXmpq& coefficients, const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory);
+mpq_class evaluateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients, const Vector2mpq& x, const ShapeFunctionEvaluator& shapeFunctionEvaluator);
+mpq_class integrateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients, const ShapeFunctionFactory& shapeFunctionFactory);
+void normalizeTrialFunction(const FemContext& ctx, VectorXmpq& coefficients, const ShapeFunctionFactory& shapeFunctionFactory);
 
 /* For testing purposes / sanity check */
-mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x);
-mpq_class integrateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx);
+mpq_class evaluateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients, const Vector2mpq& x);
+mpq_class integrateTrialFunction(const FemContext& ctx, const VectorXmpq& coefficients);
 } // namespace fem
