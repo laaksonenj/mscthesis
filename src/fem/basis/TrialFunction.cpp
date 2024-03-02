@@ -6,7 +6,7 @@
 
 namespace fem
 {
-mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x, ShapeFunctionEvaluator& shapeFunctionEvaluator)
+mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x, const ShapeFunctionEvaluator& shapeFunctionEvaluator)
 {
     mpq_class res = 0;
     const BasisFunctionIndexer basisFunctionIndexer(ctx);
@@ -20,7 +20,7 @@ mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext
     {
         const uint32_t basisFnIdx = basisFunctionIndexer.getBasisFunctionIndex(elementIdx, shapeFnIdx);
         const auto desc = shapeFunctionIndexer.getShapeFunctionDescriptor(elementType, shapeFnIdx);
-        mpq_class value = shapeFunctionEvaluator.evaluateShapeFunction(elementType, desc, Finv(x));
+        mpq_class value = shapeFunctionEvaluator.evaluate(elementType, desc, Finv(x));
         if (const auto* descp = std::get_if<SideShapeFunctionDescriptor>(&desc))
         {
             const auto adjacentElementIdx = mesh.getIndexOfAdjacentElement(elementIdx, descp->sideIdx);

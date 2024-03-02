@@ -7,7 +7,7 @@
 
 namespace fem
 {
-mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x, ShapeFunctionEvaluator& shapeFunctionEvaluator);
+mpq_class evaluateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const Vector2mpq& x, const ShapeFunctionEvaluator& shapeFunctionEvaluator);
 mpq_class integrateTrialFunction(const VectorXmpq& coefficients, const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory);
 void normalizeTrialFunction(VectorXmpq& coefficients, const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory);
 

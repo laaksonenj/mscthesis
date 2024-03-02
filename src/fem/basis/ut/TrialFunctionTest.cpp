@@ -24,7 +24,7 @@ protected:
     const FemContext ctx{mesh, p, PolynomialSpaceType_Product};
     const BasisFunctionIndexer basisFunctionIndexer{ctx};
     ShapeFunctionFactory shapeFunctionFactory{};
-    ShapeFunctionEvaluator shapeFunctionEvaluator{shapeFunctionFactory};
+    const ShapeFunctionEvaluator shapeFunctionEvaluator{shapeFunctionFactory};
     VectorXmpq coefficients;
 
     void SetUp()

@@ -9,22 +9,21 @@ ShapeFunctionEvaluator::ShapeFunctionEvaluator(const ShapeFunctionFactory& shape
 {
 }
 
-const mpq_class& ShapeFunctionEvaluator::evaluateShapeFunction(ElementType elementType, const ShapeFunctionDescriptor& descriptor, const Vector2mpq& x)
+mpq_class ShapeFunctionEvaluator::evaluate(ElementType elementType, const ShapeFunctionDescriptor& descriptor, const Vector2mpq& x) const
 {
     auto& cache = m_cache[elementType];
-    if (!cache.contains(descriptor))
+    if (cache.contains(descriptor) && cache.at(descriptor).contains(x))
     {
-        cache.emplace(descriptor, PointEvalMap{});
+        return cache.at(descriptor).at(x);
     }
-    if (!cache.at(descriptor).contains(x))
+    else
     {
         const Polynomial2D& shapeFn = m_shapeFunctionFactory.getShapeFunction(elementType, descriptor);
-        cache.at(descriptor).emplace(x, shapeFn(x));
+        return shapeFn(x);
     }
-    return cache.at(descriptor).at(x);
 }
 
-void ShapeFunctionEvaluator::preEvaluateShapeFunctions(ElementType elementType, const std::vector<Vector2mpq>& points)
+void ShapeFunctionEvaluator::preEvaluate(ElementType elementType, const std::vector<Vector2mpq>& points)
 {
     auto& cache = m_cache[elementType];
     std::vector<ShapeFunctionDescriptor> descs;

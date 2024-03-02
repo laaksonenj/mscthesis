@@ -15,10 +15,10 @@ class ShapeFunctionEvaluator
 {
 public:
     explicit ShapeFunctionEvaluator(const ShapeFunctionFactory& shapeFunctionFactory);
-    explicit ShapeFunctionEvaluator(ShapeFunctionFactory&& shapeFunctionFactory) = delete;
+    ShapeFunctionEvaluator(ShapeFunctionFactory&& shapeFunctionFactory) = delete;
 
-    const mpq_class& evaluateShapeFunction(ElementType elementType, const ShapeFunctionDescriptor& descriptor, const Vector2mpq& x);
-    void preEvaluateShapeFunctions(ElementType elementType, const std::vector<Vector2mpq>& points);
+    mpq_class evaluate(ElementType elementType, const ShapeFunctionDescriptor& descriptor, const Vector2mpq& x) const;
+    void preEvaluate(ElementType elementType, const std::vector<Vector2mpq>& points);
 
 private:
     const ShapeFunctionFactory& m_shapeFunctionFactory;

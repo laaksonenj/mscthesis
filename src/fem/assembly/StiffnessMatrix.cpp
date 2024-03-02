@@ -33,7 +33,6 @@ struct StiffnessMatrixAssembler
     void precomputeIntegrals(ElementType elementType);
     void assembleElement(Mesh::ElementIndex elementIdx);
     void symmetrize();
-
 };
 
 StiffnessMatrixAssembler::StiffnessMatrixAssembler(const FemContext& ctx, const ShapeFunctionFactory& shapeFunctionFactory)
