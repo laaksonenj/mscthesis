@@ -1,7 +1,5 @@
 #include "fem/math/quadrature/Quadrature2D.hpp"
 
-#include <ranges>
-
 namespace fem
 {
 namespace
