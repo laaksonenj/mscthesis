@@ -11,7 +11,7 @@ ShapeFunctionEvaluator::ShapeFunctionEvaluator(const ShapeFunctionFactory& shape
 
 mpq_class ShapeFunctionEvaluator::evaluate(ElementType elementType, const ShapeFunctionDescriptor& descriptor, const Vector2mpq& x) const
 {
-    auto& cache = m_cache[elementType];
+    const auto& cache = m_cache[elementType];
     if (cache.contains(descriptor) && cache.at(descriptor).contains(x))
     {
         return cache.at(descriptor).at(x);
