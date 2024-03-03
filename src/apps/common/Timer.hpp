@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chrono>
-#include <ostream>
+#include <string>
 
 namespace fem
 {
@@ -23,10 +23,5 @@ private:
     std::chrono::high_resolution_clock::time_point m_previousLapTime;
 };
 
-struct MinutesSecondsMilliseconds
-{
-    Timer::Duration duration;
-};
-
-std::ostream& operator<<(std::ostream& out, MinutesSecondsMilliseconds msms);
+std::string minutesSecondsMilliseconds(Timer::Duration d);
 } // namespace fem

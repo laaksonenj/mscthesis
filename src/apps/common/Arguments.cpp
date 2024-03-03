@@ -24,6 +24,8 @@ Arguments::Arguments(int argc, char* argv[])
         ("boundary-function-idx", po::value<int>())
         ("element-idx", po::value<int>())
         ("local-side-idx", po::value<int>())
+        ("output-file", po::value<std::string>())
+        ("precision", po::value<int>()->default_value(64))
         ;
 
     po::store(po::parse_command_line(argc, argv, m_desc, po::command_line_style::unix_style ^ po::command_line_style::allow_short), m_vm);
@@ -175,6 +177,39 @@ Arguments::Arguments(int argc, char* argv[])
         else
         {
             ARGUMENT_MISSING("local-side-idx");
+        }
+    });
+
+    m_optionParsers.emplace("output-file", [](const po::variables_map& vm)
+    {
+        if (vm.count("output-file"))
+        {
+            return std::any(vm["output-file"].as<std::string>());
+        }
+        else
+        {
+            ARGUMENT_MISSING("output-file");
+        }
+    });
+
+    m_optionParsers.emplace("precision", [](const po::variables_map& vm)
+    {
+        if (vm.count("precision"))
+        {
+            const int precision = vm["precision"].as<int>();
+            if (precision >= 64)
+            {
+                return std::any(static_cast<uint32_t>(precision));
+            }
+            else
+            {
+                std::cout << "precision must be greater than or equal to 64" << std::endl;
+                return std::any();
+            }
+        }
+        else
+        {
+            ARGUMENT_MISSING("precision");
         }
     });
 }

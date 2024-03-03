@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iomanip>
+#include <sstream>
 
 namespace fem
 {
@@ -34,14 +35,19 @@ Timer::Duration Timer::getElapsedTime()
     return currentTime - m_startTime;
 }
 
-std::ostream& operator<<(std::ostream& out, MinutesSecondsMilliseconds msms)
+std::string minutesSecondsMilliseconds(Timer::Duration d)
 {
     using namespace std::chrono;
-    const minutes min = duration_cast<minutes>(msms.duration);
-    msms.duration -= min;
-    const seconds sec = duration_cast<seconds>(msms.duration);
-    msms.duration -= sec;
-    const milliseconds ms = duration_cast<milliseconds>(msms.duration);
-    return out << min.count() << "m" << sec.count() << "." << std::setfill('0') << std::setw(3) << ms.count() << "s";
+
+    const minutes min = duration_cast<minutes>(d);
+    d -= min;
+    const seconds sec = duration_cast<seconds>(d);
+    d -= sec;
+    const milliseconds ms = duration_cast<milliseconds>(d);
+
+    std::stringstream ss;
+    ss << min.count() << "m";
+    ss << sec.count() << "." << std::setfill('0') << std::setw(3) << ms.count() << "s";
+    return ss.str();
 }
 } // namespace fem
