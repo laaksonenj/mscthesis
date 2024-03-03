@@ -34,7 +34,7 @@ public:
     explicit GaussLegendreTableTriangleCrowdingFree(uint32_t n);
 };
 
-inline const GaussLegendreTableTriangleQuadMapped glTableTriQuadMapped100{100};
-inline const GaussLegendreTableTriangleCrowdingFree glTableTriCrowdingFree100{100};
-inline const GaussLegendreTableTriangle& defaultGLTableTri = glTableTriCrowdingFree100;
+inline const GaussLegendreTableTriangleQuadMapped glTableTriQuadMapped{100};
+inline const GaussLegendreTableTriangleCrowdingFree glTableTriCrowdingFree{100};
+inline const GaussLegendreTableTriangle& defaultGLTableTri = glTableTriCrowdingFree;
 } // namespace fem

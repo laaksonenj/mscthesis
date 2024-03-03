@@ -20,6 +20,5 @@ private:
     std::vector<mpq_class> m_abscissas;
 };
 
-inline const GaussLegendreTable1D glTable1D100{100};
-inline const GaussLegendreTable1D& defaultGLTable1D = glTable1D100;
+inline const GaussLegendreTable1D defaultGLTable1D{100};
 } // namespace fem

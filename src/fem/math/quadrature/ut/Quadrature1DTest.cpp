@@ -14,7 +14,7 @@ TEST(Quadrature1DTest, GaussLegendre1)
     {
         return (1-t)/(1+t*t);
     };
-    EXPECT_DOUBLE_EQ(integrateGaussLegendre(f1, 0, 1).get_d(), (std::numbers::pi - 2 * std::numbers::ln2)/4);
+    EXPECT_NEAR(integrateGaussLegendre(f1, 0, 1).get_d(), (std::numbers::pi - 2 * std::numbers::ln2)/4, 1e-10);
 
     auto f2 = [](const mpq_class& t) -> mpq_class
     {

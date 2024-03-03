@@ -15,9 +15,23 @@ mpq_class doQuadrature(const BivariateFunction& f, const Element& element, const
     {
         return f(F(x));
     };
-    for (auto [w, x] : std::views::zip(table.getWeights(), table.getAbscissas()))
+    const auto& weights = table.getWeights();
+    const auto& abscissas = table.getAbscissas();
+    const uint32_t n = weights.size();
+    #pragma omp parallel
     {
-        res += w * g(x);
+        mpq_class subRes = 0;
+        #pragma omp for
+        for (int i = 0; i < n; i++)
+        {
+            const auto& w = weights.at(i);
+            const auto& x = abscissas.at(i);
+            subRes += w * g(x);
+        }
+        #pragma omp critical
+        {
+            res += subRes;
+        }
     }
     res *= F.A.determinant();
     return res;

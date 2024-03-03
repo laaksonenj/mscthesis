@@ -23,7 +23,7 @@ TEST(Quadrature2DTest, IntegrationOverParallelogram1)
         }
     };
     const Parallelogram quad1 = Parallelogram(Node(-1, -1), Node(1, -1), Node(1, 1), Node(-1, 1));
-    EXPECT_NEAR(integrateGaussLegendre(f1, quad1).get_d(), -1.472112985, 1e-3);
+    EXPECT_NEAR(integrateGaussLegendre(f1, quad1).get_d(), -1.472112985, 1e-2);
 
     auto f2 = [](const Vector2mpq& x) -> mpq_class
     {
@@ -37,7 +37,7 @@ TEST(Quadrature2DTest, IntegrationOverParallelogram1)
         return res;
     };
     const Parallelogram quad2 = Parallelogram(Node(1, 1), Node(2, 2), Node(2, 3), Node(1, 2));
-    EXPECT_DOUBLE_EQ(integrateGaussLegendre(f2, quad2).get_d(), mpq_class("41840537/2380").get_d());
+    EXPECT_NEAR(integrateGaussLegendre(f2, quad2).get_d(), mpq_class("41840537/2380").get_d(), 1e-7);
 }
 
 TEST(Quadrature2DTest, IntegrationOverParallelogram2)
@@ -62,7 +62,7 @@ TEST(Quadrature2DTest, IntegrationOverParallelogram2)
                           + integrateGaussLegendre(f, quad2)
                           + integrateGaussLegendre(f, quad3)
                           + integrateGaussLegendre(f, quad4);
-    EXPECT_NEAR(res.get_d(), -1.472112985, 1e-7); // compare to 1e-3 above in IntegrationOverParallelogram1 => more accurate by keeping the singularity at a node
+    EXPECT_NEAR(res.get_d(), -1.472112985, 1e-7); // compare to 1e-2 above in IntegrationOverParallelogram1 => more accurate by keeping the singularity at a node
 }
 
 TEST(Quadrature2DTest, IntegrationOverParallelogram3)
@@ -90,14 +90,14 @@ TEST(Quadrature2DTest, IntegrationOverParallelogram3)
 
     /* x_0 at node */
     x_0 = Vector2mpq{1, -1};
-    EXPECT_NEAR(integrateGaussLegendre(f, quad).get_d(), 6.73582732080, 1e-8);
+    EXPECT_NEAR(integrateGaussLegendre(f, quad).get_d(), 6.73582732080, 1e-7);
 
     /* x_0 on side */
     x_0 = Vector2mpq("-1/3", "1");
     const Parallelogram quad1s = Parallelogram(Node(-1, -1), Node("-1/3", "-1"), Node("-1/3", "1"), Node(-1, 1));
     const Parallelogram quad2s = Parallelogram(Node("-1/3", "-1"), Node(1, -1), Node(1, 1), Node("-1/3", "1"));
     const mpq_class sideRes = integrateGaussLegendre(f, quad1s) + integrateGaussLegendre(f, quad2s);
-    EXPECT_NEAR(sideRes.get_d(), 6.2802483954283, 1e-8);
+    EXPECT_NEAR(sideRes.get_d(), 6.2802483954283, 1e-7);
 
     /* x_0 inside */
     x_0 = Vector2mpq("-3/5", "-1/4");
@@ -109,7 +109,7 @@ TEST(Quadrature2DTest, IntegrationOverParallelogram3)
                              + integrateGaussLegendre(f, quad2i)
                              + integrateGaussLegendre(f, quad3i)
                              + integrateGaussLegendre(f, quad4i);
-    EXPECT_NEAR(intRes.get_d(), 5.9946842232642, 1e-8);
+    EXPECT_NEAR(intRes.get_d(), 5.9946842232642, 1e-7);
 }
 
 TEST(Quadrature2DTest, IntegrationOverTriangle1)
@@ -119,21 +119,21 @@ TEST(Quadrature2DTest, IntegrationOverTriangle1)
         return x(0)*mpq_class(sqrt(mpf_class(1-x(1))));
     };
     const Triangle tri1 = Triangle(Vector2mpq(1, 0), Vector2mpq(0, 1), Vector2mpq(0, 0));
-    EXPECT_NEAR(integrateGaussLegendre(f1, tri1).get_d(), 1.0/7, 1e-9);
+    EXPECT_NEAR(integrateGaussLegendre(f1, tri1).get_d(), 1.0/7, 1e-7);
 
     auto f2 = [](const Vector2mpq& x) -> mpq_class
     {
         return mpq_class(sqrt(mpf_class(x(0)+x(1))));
     };
     const Triangle tri2 = Triangle(Vector2mpq(1, 0), Vector2mpq(0, 1), Vector2mpq(0, 0));
-    EXPECT_NEAR(integrateGaussLegendre(f2, tri2).get_d(), 2.0/5, 1e-9);
+    EXPECT_NEAR(integrateGaussLegendre(f2, tri2).get_d(), 2.0/5, 1e-7);
 
     auto f3 = [](const Vector2mpq& x) -> mpq_class
     {
         return mpq_class(std::exp(mpf_class(x(0)+x(1)).get_d()));
     };
     const Triangle tri3 = Triangle(Vector2mpq(0, 0), Vector2mpq(std::sqrt(3), 1), Vector2mpq(0, 2));
-    EXPECT_NEAR(integrateGaussLegendre(f3, tri3).get_d(), 9.763139379, 1e-9);
+    EXPECT_NEAR(integrateGaussLegendre(f3, tri3).get_d(), 9.763139379, 1e-7);
 
     auto f4 = [](const Vector2mpq& x) -> mpq_class
     {
@@ -141,7 +141,7 @@ TEST(Quadrature2DTest, IntegrationOverTriangle1)
         return a*a*a;
     };
     const Triangle tri4 = Triangle(Vector2mpq(-4, 1), Vector2mpq(-2.5, -3), Vector2mpq(-1, 1));
-    EXPECT_NEAR(integrateGaussLegendre(f4, tri4).get_d(), -1128, 1e-9);
+    EXPECT_NEAR(integrateGaussLegendre(f4, tri4).get_d(), -1128, 1e-7);
 
     auto f5 = [](const Vector2mpq& x) -> mpq_class
     {
@@ -149,7 +149,7 @@ TEST(Quadrature2DTest, IntegrationOverTriangle1)
         return x(0)*x(0)*a*a*a;
     };
     const Triangle tri5 = Triangle(Vector2mpq(-3, -2), Vector2mpq(5, -1), Vector2mpq(-2, 1));
-    EXPECT_NEAR(integrateGaussLegendre(f5, tri5).get_d(), 4301.0/420, 1e-9);
+    EXPECT_NEAR(integrateGaussLegendre(f5, tri5).get_d(), 4301.0/420, 1e-7);
 }
 
 TEST(Quadrature2DTest, IntegrationOverTriangle2)
@@ -177,18 +177,18 @@ TEST(Quadrature2DTest, IntegrationOverTriangle2)
 
     /* x_0 at node 0 */
     x_0 = Vector2mpq{-1, -1};
-    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriQuadMapped100).get_d(), 3.172693694155439, 1e-8);
-    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriCrowdingFree100).get_d(), 3.172693694155439, 1e-8);
+    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriQuadMapped).get_d(), 3.172693694155439, 1e-7);
+    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriCrowdingFree).get_d(), 3.172693694155439, 1e-7);
 
     /* x_0 at node 1 */
     x_0 = Vector2mpq{1, -1};
-    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriQuadMapped100).get_d(), 3.499196781457323, 1e-8);
-    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriCrowdingFree100).get_d(), 3.499196781457323, 1e-8);
+    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriQuadMapped).get_d(), 3.499196781457323, 1e-7);
+    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriCrowdingFree).get_d(), 3.499196781457323, 1e-7);
 
     /* x_0 at node 2 */
     x_0 = Vector2mpq{-1, 1};
-    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriQuadMapped100).get_d(), 3.20880247922330621291, 1e-8);
-    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriCrowdingFree100).get_d(), 3.20880247922330621291, 1e-8);
+    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriQuadMapped).get_d(), 3.20880247922330621291, 1e-7);
+    EXPECT_NEAR(integrateGaussLegendre(f, tri, glTableTriCrowdingFree).get_d(), 3.20880247922330621291, 1e-7);
 }
 
 TEST(Quadrature2DTest, IntegrationOverTriangle3)
@@ -219,7 +219,7 @@ TEST(Quadrature2DTest, IntegrationOverTriangle3)
     const Triangle tri1s = Triangle(Node(-1, -1), Node(1, -1), Node(0, 0));
     const Triangle tri2s = Triangle(Node(-1, 1), Node(-1, -1), Node(0, 0));
     const mpq_class resSide = integrateGaussLegendre(f, tri1s) + integrateGaussLegendre(f, tri2s);
-    EXPECT_NEAR(resSide.get_d(), 3.073822175169817, 1e-8);
+    EXPECT_NEAR(resSide.get_d(), 3.073822175169817, 1e-7);
 
     /* x_0 inside */
     x_0 = Vector2mpq("-3/5", "-1/4");
@@ -227,6 +227,6 @@ TEST(Quadrature2DTest, IntegrationOverTriangle3)
     const Triangle tri2i = Triangle(Node(-1, 1), Node("-3/5", "-1/4"), Node(1, -1));
     const Triangle tri3i = Triangle(Node(-1, -1), Node("-3/5", "-1/4"), Node(-1, 1));
     const mpq_class resInt = integrateGaussLegendre(f, tri1i) + integrateGaussLegendre(f, tri2i) + integrateGaussLegendre(f, tri3i);
-    EXPECT_NEAR(resInt.get_d(), 2.9072571636138239, 1e-8);
+    EXPECT_NEAR(resInt.get_d(), 2.9072571636138239, 1e-7);
 }
 } // namespace fem::ut

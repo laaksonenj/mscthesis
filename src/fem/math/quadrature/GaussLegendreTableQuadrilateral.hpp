@@ -20,6 +20,5 @@ private:
     std::vector<Vector2mpq> m_abscissas;
 };
 
-inline const GaussLegendreTableQuadrilateral glTableQuad100{100};
-inline const GaussLegendreTableQuadrilateral& defaultGLTableQuad = glTableQuad100;
+inline const GaussLegendreTableQuadrilateral defaultGLTableQuad{100};
 } // namespace fem

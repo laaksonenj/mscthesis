@@ -17,6 +17,8 @@ target_link_libraries(fem_math_quadrature_lib
         fem_math_common_lib
         fem_multiprecision_lib
         GSL::gsl
+    PRIVATE
+        OpenMP::OpenMP_CXX
 )
 
 add_subdirectory(ut)
