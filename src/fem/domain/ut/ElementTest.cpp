@@ -176,6 +176,10 @@ TEST(ElementTest, SubdivideParallelogram)
     const auto subdivision9 = quad.subdivide(Vector2mpq{1, -1});
     ASSERT_EQ(subdivision9.size(), 1);
     EXPECT_EQ(*subdivision9.at(0), quad);
+
+    const auto subdivision10 = quad.subdivide(Vector2mpq{3, 0});
+    ASSERT_EQ(subdivision10.size(), 1);
+    EXPECT_EQ(*subdivision10.at(0), quad);
 }
 
 TEST(ElementTest, SubdivideTriangle)
@@ -214,14 +218,9 @@ TEST(ElementTest, SubdivideTriangle)
     const auto subdivision7 = tri.subdivide(Vector2mpq{0, 1});
     ASSERT_EQ(subdivision7.size(), 1);
     EXPECT_EQ(*subdivision7.at(0), tri);
-}
 
-TEST(ElementTest, SubdivideAbortsIfPointOutsideElement)
-{
-    const Parallelogram quad(Node(-2, -1), Node(1, -1), Node(2, 1), Node(-1, 1));
-    EXPECT_DEATH(quad.subdivide(Vector2mpq{3, 0}), ".*");
-
-    const Triangle tri(Node(0, 0), Node(1, 0), Node(0, 1));
-    EXPECT_DEATH(tri.subdivide(Vector2mpq{-1, 0}), ".*");
+    const auto subdivision8 = tri.subdivide(Vector2mpq{-1, 0});
+    ASSERT_EQ(subdivision8.size(), 1);
+    EXPECT_EQ(*subdivision8.at(0), tri);
 }
 } // namespace fem::ut

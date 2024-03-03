@@ -16,17 +16,22 @@ AffineMap Triangle::getReferenceElementMap() const
     return AffineMap(A, m_nodes[0]);
 }
 
-std::vector<std::unique_ptr<Element>> Triangle::subdivideImpl(const Vector2mpq& x) const
+std::vector<std::unique_ptr<Element>> Triangle::subdivide(const Vector2mpq& x) const
 {
     std::vector<std::unique_ptr<Element>> res{};
     const AffineMap F = getReferenceElementMap();
     const AffineMap Finv = F.inverse();
     const Vector2mpq xloc = Finv(x);
-    const bool pointIsInside = xloc(0) > 0 && xloc(1) > 0 && xloc(0) + xloc(1) < 1;
+    const bool pointIsOutside = !isPointInsideElement(x, *this);
+    const bool pointIsInInterior = xloc(0) > 0 && xloc(1) > 0 && xloc(0) + xloc(1) < 1;
     const bool pointIsOnSide = (xloc(0) == 0 && xloc(1) > 0 && xloc(1) < 1)
                                || (xloc(1) == 0 && xloc(0) > 0 && xloc(0) < 1)
                                || (xloc(0) + xloc(1) == 1 && xloc(0) != 1 && xloc(1) != 1);
-    if (pointIsInside)
+    if (pointIsOutside)
+    {
+        res.push_back(std::make_unique<Triangle>(*this));
+    }
+    else if (pointIsInInterior)
     {
         res.push_back(std::make_unique<Triangle>(m_nodes[0], x, m_nodes[2]));
         res.push_back(std::make_unique<Triangle>(m_nodes[1], x, m_nodes[0]));

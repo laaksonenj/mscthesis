@@ -16,9 +16,7 @@ public:
     uint32_t getNumOfNodes() const override { return 4; }
     Node getNode(uint32_t nodeIdx) const override { assert(nodeIdx < 4); return m_nodes[nodeIdx]; }
     AffineMap getReferenceElementMap() const override;
-
-private:
-    std::vector<std::unique_ptr<Element>> subdivideImpl(const Vector2mpq& x) const override;
+    std::vector<std::unique_ptr<Element>> subdivide(const Vector2mpq& x) const override;
 
 private:
     std::array<Node, 4> m_nodes;

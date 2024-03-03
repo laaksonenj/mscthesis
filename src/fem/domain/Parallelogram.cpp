@@ -26,15 +26,20 @@ AffineMap Parallelogram::getReferenceElementMap() const
     return compose(F, G);
 }
 
-std::vector<std::unique_ptr<Element>> Parallelogram::subdivideImpl(const Vector2mpq& x) const
+std::vector<std::unique_ptr<Element>> Parallelogram::subdivide(const Vector2mpq& x) const
 {
     std::vector<std::unique_ptr<Element>> res{};
     const AffineMap F = getReferenceElementMap();
     const AffineMap Finv = F.inverse();
     const Vector2mpq xloc = Finv(x);
-    const bool pointIsInside = abs(xloc(0)) != 1 && abs(xloc(1)) != 1;
+    const bool pointIsOutside = !isPointInsideElement(x, *this);
+    const bool pointIsInInterior = abs(xloc(0)) != 1 && abs(xloc(1)) != 1;
     const bool pointIsOnSide = (abs(xloc(0)) == 1 && abs(xloc(1)) != 1) || (abs(xloc(1)) == 1 && abs(xloc(0)) != 1);
-    if (pointIsInside)
+    if (pointIsOutside)
+    {
+        res.push_back(std::make_unique<Parallelogram>(*this));
+    }
+    else if (pointIsInInterior)
     {
         const mpq_class tx = (xloc(0) + 1) / 2;
         const mpq_class ty = (xloc(1) + 1) / 2;
