@@ -19,21 +19,21 @@
                 "VCPKG_TARGET_TRIPLET": "x64-windows"
             }
         },
-	{
-	    "name": "linux-base",
-	    "generator": "Ninja",
-	    "toolchainFile": "${sourceDir}/dependencies/vcpkg/scripts/buildsystems/vcpkg.cmake",
-	    "cacheVariables": {
-		"VCPKG_INSTALLED_DIR": "${sourceDir}/dependencies/vcpkg_installed"
-	    }
-	},
-	{
-	    "name": "linux-release",
-	    "inherits": "linux-base",
-	    "binaryDir": "${sourceDir}/build_linux_release",
-	    "cacheVariables": {
-		"CMAKE_BUILD_TYPE": "Release"
-	    }
-	}
+        {
+            "name": "linux-base",
+            "generator": "Ninja",
+            "toolchainFile": "${sourceDir}/dependencies/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "VCPKG_INSTALLED_DIR": "${sourceDir}/dependencies/vcpkg_installed"
+            }
+        },
+        {
+            "name": "linux-release",
+            "inherits": "linux-base",
+            "binaryDir": "${sourceDir}/build_linux_release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
     ]
   }

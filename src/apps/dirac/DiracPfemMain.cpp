@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include <Eigen/Core>
+#include <Eigen/Cholesky>
 #include <gmpxx.h>
 #include <omp.h>
 
@@ -34,7 +36,6 @@ int main(int argc, char* argv[])
     const PolynomialSpaceType polynomialSpaceType = args.getValue<PolynomialSpaceType>("polynomial-space");
     const Vector2mpq x_0 = args.getValue<Vector2mpq>("dirac-point");
     const fs::path outputFilepath = fs::path(args.getValue<std::string>("output-file"));
-    const uint32_t precision = args.getValue<uint32_t>("precision");
 
     std::cout << "Arguments:" << std::endl;
     std::cout << "--mesh-file " << meshFilename << std::endl;
@@ -42,15 +43,15 @@ int main(int argc, char* argv[])
     std::cout << "--polynomial-space " << polynomialSpaceType << std::endl;
     std::cout << "--dirac-point " << x_0(0) << " " << x_0(1) << std::endl;
     std::cout << "--output-file " << outputFilepath << std::endl;
-    std::cout << "--precision " << precision << std::endl;
     std::cout << std::endl;
 
-    mpf_set_default_prec(precision);
-    std::cout << "Precision of mpf_class: " << mpf_get_default_prec() << std::endl;
     std::cout << "Number of OpenMP threads: " << omp_get_max_threads() << std::endl;
     std::cout << std::endl;
 
-    fs::create_directories(outputFilepath.parent_path());
+    if (!outputFilepath.parent_path().empty())
+    {
+        fs::create_directories(outputFilepath.parent_path());
+    }
     std::ofstream outputFile(outputFilepath);
     if (!outputFile.is_open())
     {
@@ -129,14 +130,14 @@ int main(int argc, char* argv[])
         const uint32_t dim = subLoadVector.size();
         const MatrixXmpq A_mpq = subStiffnessMatrix.block(1, 1, dim-1, dim-1);
         const VectorXmpq b_mpq = subLoadVector.segment(1, dim-1);
-        const MatrixXmpf A_mpf = A_mpq.cast<mpf_class>();
-        const VectorXmpf b_mpf = b_mpq.cast<mpf_class>();
+        const Eigen::MatrixXd A_d = A_mpq.unaryExpr([](const mpq_class& elem) -> double { return elem.get_d(); });
+        const Eigen::VectorXd b_d = b_mpq.unaryExpr([](const mpq_class& elem) -> double { return elem.get_d(); });
         std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
 
         std::cout << "Solving system of equations... ";
         timer.lap();
-        const VectorXmpf x_mpf = A_mpf.llt().solve(b_mpf);
-        const VectorXmpq x_mpq = x_mpf.cast<mpq_class>();
+        const Eigen::VectorXd x_d = A_d.llt().solve(b_d);
+        const VectorXmpq x_mpq = x_d.cast<mpq_class>();
         VectorXmpq coeffs(dim);
         coeffs(0) = 0;
         coeffs.segment(1, dim-1) = x_mpq;
