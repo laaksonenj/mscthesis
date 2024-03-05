@@ -2,37 +2,22 @@
 
 #include <cassert>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 namespace fem
 {
-Timer::Timer()
-    : m_started(false)
+void Timer::start(const std::string& msg)
 {
-}
-
-void Timer::start()
-{
-    assert(!m_started);
-    m_started = true;
+    std::cout << msg << std::flush;
     m_startTime = std::chrono::high_resolution_clock::now();
-    m_previousLapTime = m_startTime;
 }
 
-Timer::Duration Timer::lap()
+void Timer::stop()
 {
-    assert(m_started);
     const auto currentTime = std::chrono::high_resolution_clock::now();
-    const auto lapTime = currentTime - m_previousLapTime;
-    m_previousLapTime = currentTime;
-    return lapTime;
-}
-
-Timer::Duration Timer::getElapsedTime()
-{
-    assert(m_started);
-    const auto currentTime = std::chrono::high_resolution_clock::now();
-    return currentTime - m_startTime;
+    const auto elapsedTime = currentTime - m_startTime;
+    std::cout << minutesSecondsMilliseconds(elapsedTime) << std::endl;
 }
 
 std::string minutesSecondsMilliseconds(Timer::Duration d)

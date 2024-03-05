@@ -188,7 +188,7 @@ Arguments::Arguments(int argc, char* argv[])
         }
         else
         {
-            ARGUMENT_MISSING("output-file");
+            return std::any(std::string(""));
         }
     });
 

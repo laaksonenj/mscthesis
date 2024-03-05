@@ -26,9 +26,6 @@ namespace fs = std::filesystem;
 
 int main(int argc, char* argv[])
 {
-    Timer timer;
-    timer.start();
-
     Arguments args(argc, argv);
 
     const std::string meshFilename = args.getValue<std::string>("mesh-file");
@@ -48,70 +45,69 @@ int main(int argc, char* argv[])
     std::cout << "Number of OpenMP threads: " << omp_get_max_threads() << std::endl;
     std::cout << std::endl;
 
-    if (!outputFilepath.parent_path().empty())
+    std::ofstream outputFile;
+    if (!outputFilepath.empty())
     {
-        fs::create_directories(outputFilepath.parent_path());
+        if (!outputFilepath.parent_path().empty())
+        {
+            fs::create_directories(outputFilepath.parent_path());
+        }
+        outputFile.open(outputFilepath);
+        if (!outputFile.is_open())
+        {
+            std::cout << "Failed to create output file " << outputFilepath << std::endl;
+            return 1;
+        }
+        outputFile << std::setprecision(16);
     }
-    std::ofstream outputFile(outputFilepath);
-    if (!outputFile.is_open())
-    {
-        std::cout << "Failed to open file " << outputFilepath << std::endl;
-        return 1;
-    }
-    outputFile << std::setprecision(16);
 
     const auto mesh = std::make_shared<Mesh>(createMeshFromFile(meshFilename));
     const FemContext ctx(mesh, p_max, polynomialSpaceType);
 
+    Timer timer;
+
     ShapeFunctionFactory shapeFunctionFactory;
     if (mesh->containsQuadrilateral())
     {
-        std::cout << "Precomputing quadrilateral shape functions... ";
-        timer.lap();
+        timer.start("Precomputing quadrilateral shape functions... ");
         shapeFunctionFactory.createShapeFunctions(ElementType_Parallelogram, p_max);
-        std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+        timer.stop();
     }
     if (mesh->containsTriangle())
     {
-        std::cout << "Precomputing triangle shape functions... ";
-        timer.lap();
+        timer.start("Precomputing triangle shape functions... ");
         shapeFunctionFactory.createShapeFunctions(ElementType_Triangle, p_max);
-        std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+        timer.stop();
     }
 
     ShapeFunctionEvaluator shapeFunctionEvaluator(shapeFunctionFactory);
     if (mesh->containsQuadrilateral())
     {
-        std::cout << "Pre-evaluating quadrilateral shape functions... ";
-        timer.lap();
+        timer.start("Pre-evaluating quadrilateral shape functions... ");
         shapeFunctionEvaluator.preEvaluate(ElementType_Parallelogram, defaultGLTableQuad.getAbscissas());
-        std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+        timer.stop();
     }
     if (mesh->containsTriangle())
     {
-        std::cout << "Pre-evaluating triangle shape functions... ";
-        timer.lap();
+        timer.start("Pre-evaluating triangle shape functions... ");
         shapeFunctionEvaluator.preEvaluate(ElementType_Triangle, defaultGLTableTri.getAbscissas());
-        std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+        timer.stop();
     }
 
     const auto exact = getNormalizedGreensFunction(x_0, *mesh);
     const auto grad_exact = getGreensFunctionGradient(x_0);
 
-    std::cout << "Assembling stiffness matrix... ";
-    timer.lap();
+    timer.start("Assembling stiffness matrix... ");
     const MatrixXmpq stiffnessMatrix = assembleStiffnessMatrix(ctx, shapeFunctionFactory);
-    std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+    timer.stop();
 
-    std::cout << "Assembling Dirac load vector... ";
-    timer.lap();
+    timer.start("Assembling Dirac load vector... ");
     const VectorXmpq diracLoadVector = assembleDiracLoadVector(ctx, x_0, shapeFunctionFactory);
-    std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+    timer.stop();
 
-    std::cout << "Assembling Neumann load vector... ";
-    timer.lap();
+    timer.start("Assembling Neumann load vector... ");
     const VectorXmpq neumannLoadVector = assembleNeumannLoadVector(ctx, grad_exact, shapeFunctionFactory);
-    std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+    timer.stop();
 
     const VectorXmpq loadVector = diracLoadVector + neumannLoadVector;
 
@@ -123,8 +119,7 @@ int main(int argc, char* argv[])
 
         const FemContext subCtx(ctx.mesh, p, ctx.polynomialSpaceType);
 
-        std::cout << "Extracting system of equations... ";
-        timer.lap();
+        timer.start("Extracting system of equations... ");
         const MatrixXmpq subStiffnessMatrix = extractSubStiffnessMatrix(ctx, stiffnessMatrix, p);
         const VectorXmpq subLoadVector = extractSubLoadVector(ctx, loadVector, p);
         const uint32_t dim = subLoadVector.size();
@@ -132,29 +127,26 @@ int main(int argc, char* argv[])
         const VectorXmpq b_mpq = subLoadVector.segment(1, dim-1);
         const Eigen::MatrixXd A_d = A_mpq.unaryExpr([](const mpq_class& elem) -> double { return elem.get_d(); });
         const Eigen::VectorXd b_d = b_mpq.unaryExpr([](const mpq_class& elem) -> double { return elem.get_d(); });
-        std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+        timer.stop();
 
-        std::cout << "Solving system of equations... ";
-        timer.lap();
+        timer.start("Solving system of equations... ");
         const Eigen::VectorXd x_d = A_d.llt().solve(b_d);
         const VectorXmpq x_mpq = x_d.cast<mpq_class>();
         VectorXmpq coeffs(dim);
         coeffs(0) = 0;
         coeffs.segment(1, dim-1) = x_mpq;
-        std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+        timer.stop();
 
-        std::cout << "Normalizing solution... ";
-        timer.lap();
+        timer.start("Normalizing solution... ");
         normalizeTrialFunction(subCtx, coeffs, shapeFunctionFactory);
-        std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+        timer.stop();
 
         mpq_class squaredL2error = 0;
         for (int elementIdx = 0; elementIdx < mesh->getNumOfElements(); elementIdx++)
         {
-            std::cout << "Computing L2 error over element " << elementIdx << "... ";
-            timer.lap();
+            timer.start("Computing L2 error over element " + std::to_string(elementIdx) + "... ");
             const mpq_class err = computeSquaredL2ErrorOverElement(subCtx, coeffs, exact, elementIdx, x_0, shapeFunctionEvaluator);
-            std::cout << "done in " << minutesSecondsMilliseconds(timer.lap()) << std::endl;
+            timer.stop();
             squaredL2error += err;
         }
         const mpf_class L2error = sqrt(mpf_class(squaredL2error));
@@ -162,9 +154,6 @@ int main(int argc, char* argv[])
         std::cout << "L2 error: " << L2error << std::endl;
         std::cout << "--------------------------------------------------------------" << std::endl;
     }
-
-    std::cout << std::endl;
-    std::cout << "Wall time: " << minutesSecondsMilliseconds(timer.getElapsedTime()) << std::endl;
 
     return 0;
 }

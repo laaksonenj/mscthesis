@@ -11,16 +11,13 @@ public:
     using Duration = std::chrono::high_resolution_clock::duration;
 
 public:
-    Timer();
+    Timer() = default;
 
-    void start();
-    Duration lap();
-    Duration getElapsedTime();
+    void start(const std::string& msg);
+    void stop();
 
 private:
-    bool m_started;
     std::chrono::high_resolution_clock::time_point m_startTime;
-    std::chrono::high_resolution_clock::time_point m_previousLapTime;
 };
 
 std::string minutesSecondsMilliseconds(Timer::Duration d);
