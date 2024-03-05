@@ -1,7 +1,9 @@
 #include "apps/common/Arguments.hpp"
 
+#include <algorithm>
 #include <iostream>
 
+#include "apps/common/LinearSolver.hpp"
 #include "fem/basis/PolynomialSpaceType.hpp"
 #include "fem/multiprecision/Types.hpp"
 
@@ -24,8 +26,9 @@ Arguments::Arguments(int argc, char* argv[])
         ("boundary-function-idx", po::value<int>())
         ("element-idx", po::value<int>())
         ("local-side-idx", po::value<int>())
-        ("output-file", po::value<std::string>())
+        ("output-file", po::value<std::string>()->default_value(""))
         ("precision", po::value<int>()->default_value(64))
+        ("linear-solver", po::value<std::string>()->default_value("ldlt"))
         ;
 
     po::store(po::parse_command_line(argc, argv, m_desc, po::command_line_style::unix_style ^ po::command_line_style::allow_short), m_vm);
@@ -188,7 +191,7 @@ Arguments::Arguments(int argc, char* argv[])
         }
         else
         {
-            return std::any(std::string(""));
+            ARGUMENT_MISSING("output-file");
         }
     });
 
@@ -210,6 +213,33 @@ Arguments::Arguments(int argc, char* argv[])
         else
         {
             ARGUMENT_MISSING("precision");
+        }
+    });
+
+    m_optionParsers.emplace("linear-solver", [](const po::variables_map& vm)
+    {
+        if (vm.count("linear-solver"))
+        {
+            const std::string method = vm["linear-solver"].as<std::string>();
+            const auto it = std::find_if(linearSolverMethodCliNames.begin(), linearSolverMethodCliNames.end(),
+                [&method](const auto& elem)
+                {
+                    return elem.second == method;
+                }
+            );
+            if (it != linearSolverMethodCliNames.end())
+            {
+                return std::any(it->first);
+            }
+            else
+            {
+                std::cout << "Invalid linear solver method: " << method << std::endl;
+                return std::any();
+            }
+        }
+        else
+        {
+            ARGUMENT_MISSING("linear-solver");
         }
     });
 }

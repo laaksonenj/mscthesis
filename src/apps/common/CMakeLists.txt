@@ -1,5 +1,6 @@
 add_library(apps_common_lib STATIC
     Arguments.cpp
+    LinearSolver.cpp
     Timer.cpp
 )
 

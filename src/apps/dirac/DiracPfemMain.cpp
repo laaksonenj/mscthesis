@@ -11,6 +11,7 @@
 #include <omp.h>
 
 #include "apps/common/Arguments.hpp"
+#include "apps/common/LinearSolver.hpp"
 #include "apps/common/Timer.hpp"
 #include "apps/dirac/utils/GreensFunction.hpp"
 #include "apps/dirac/utils/L2Error.hpp"
@@ -33,6 +34,7 @@ int main(int argc, char* argv[])
     const PolynomialSpaceType polynomialSpaceType = args.getValue<PolynomialSpaceType>("polynomial-space");
     const Vector2mpq x_0 = args.getValue<Vector2mpq>("dirac-point");
     const fs::path outputFilepath = fs::path(args.getValue<std::string>("output-file"));
+    const LinearSolver::Method linearSolverMethod = args.getValue<LinearSolver::Method>("linear-solver");
 
     std::cout << "Arguments:" << std::endl;
     std::cout << "--mesh-file " << meshFilename << std::endl;
@@ -40,10 +42,14 @@ int main(int argc, char* argv[])
     std::cout << "--polynomial-space " << polynomialSpaceType << std::endl;
     std::cout << "--dirac-point " << x_0(0) << " " << x_0(1) << std::endl;
     std::cout << "--output-file " << outputFilepath << std::endl;
+    std::cout << "--linear-solver " << linearSolverMethodCliNames.at(linearSolverMethod) << std::endl;
     std::cout << std::endl;
 
     std::cout << "Number of OpenMP threads: " << omp_get_max_threads() << std::endl;
     std::cout << std::endl;
+
+    Timer timer;
+    LinearSolver linearSolver(linearSolverMethod);
 
     std::ofstream outputFile;
     if (!outputFilepath.empty())
@@ -63,8 +69,6 @@ int main(int argc, char* argv[])
 
     const auto mesh = std::make_shared<Mesh>(createMeshFromFile(meshFilename));
     const FemContext ctx(mesh, p_max, polynomialSpaceType);
-
-    Timer timer;
 
     ShapeFunctionFactory shapeFunctionFactory;
     if (mesh->containsQuadrilateral())
@@ -123,19 +127,19 @@ int main(int argc, char* argv[])
         const MatrixXmpq subStiffnessMatrix = extractSubStiffnessMatrix(ctx, stiffnessMatrix, p);
         const VectorXmpq subLoadVector = extractSubLoadVector(ctx, loadVector, p);
         const uint32_t dim = subLoadVector.size();
-        const MatrixXmpq A_mpq = subStiffnessMatrix.block(1, 1, dim-1, dim-1);
-        const VectorXmpq b_mpq = subLoadVector.segment(1, dim-1);
-        const Eigen::MatrixXd A_d = A_mpq.unaryExpr([](const mpq_class& elem) -> double { return elem.get_d(); });
-        const Eigen::VectorXd b_d = b_mpq.unaryExpr([](const mpq_class& elem) -> double { return elem.get_d(); });
+        const MatrixXmpq A = subStiffnessMatrix.block(1, 1, dim-1, dim-1);
+        const VectorXmpq b = subLoadVector.segment(1, dim-1);
         timer.stop();
 
         timer.start("Solving system of equations... ");
-        const Eigen::VectorXd x_d = A_d.llt().solve(b_d);
-        const VectorXmpq x_mpq = x_d.cast<mpq_class>();
+        const VectorXmpq x = linearSolver.solve(A, b);
+        timer.stop();
+
+        std::cout << "Relative error of solution due to floating-point: " << linearSolver.getRelativeError() << std::endl;
+
         VectorXmpq coeffs(dim);
         coeffs(0) = 0;
-        coeffs.segment(1, dim-1) = x_mpq;
-        timer.stop();
+        coeffs.segment(1, dim-1) = x;
 
         timer.start("Normalizing solution... ");
         normalizeTrialFunction(subCtx, coeffs, shapeFunctionFactory);
