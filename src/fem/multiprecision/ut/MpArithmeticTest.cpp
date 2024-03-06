@@ -15,6 +15,9 @@ TEST(MpArithmeticTest, MpqClassPow)
     EXPECT_EQ(pow(mpq_class("-3/4"), 1), mpq_class("-3/4"));
     EXPECT_EQ(pow(mpq_class("-3/4"), 2), mpq_class("9/16"));
     EXPECT_EQ(pow(mpq_class("-3/4"), 3), mpq_class("-27/64"));
+    EXPECT_EQ(pow(mpq_class("1/2"), 1), mpq_class("1/2"));
+    EXPECT_EQ(pow(mpq_class("7/4"), 2), mpq_class("49/16"));
+    EXPECT_EQ(pow(mpq_class("2"), 3), mpq_class("8"));
     EXPECT_EQ(pow(mpq_class(0), 0), mpq_class(1));
     EXPECT_EQ(pow(mpq_class(0), 1), mpq_class(0));
 }

@@ -6,18 +6,22 @@
 
 namespace fem
 {
-mpq_class pow(mpq_class base, int exp)
+mpq_class pow(const mpq_class& base, int exp)
 {
     assert(!(base == 0 && exp < 0));
-    mpq_class res = 1;
-    if (exp < 0)
+    mpq_class res;
+    if (exp >= 0)
     {
-        base = 1/base;
+        mpz_pow_ui(res.get_num_mpz_t(), base.get_num_mpz_t(), exp);
+        mpz_pow_ui(res.get_den_mpz_t(), base.get_den_mpz_t(), exp);
     }
-    for (int i = 0; i < std::abs(exp); i++)
+    else
     {
-        res *= base;
+        exp *= -1;
+        mpz_pow_ui(res.get_num_mpz_t(), base.get_den_mpz_t(), exp);
+        mpz_pow_ui(res.get_den_mpz_t(), base.get_num_mpz_t(), exp);
     }
+    res.canonicalize();
     return res;
 }
 
