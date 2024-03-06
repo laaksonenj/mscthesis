@@ -5,9 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <Eigen/Core>
-#include <Eigen/Cholesky>
-#include <gmpxx.h>
 #include <omp.h>
 
 #include "apps/common/Arguments.hpp"
@@ -88,13 +85,15 @@ int main(int argc, char* argv[])
     if (mesh->containsQuadrilateral())
     {
         timer.start("Pre-evaluating quadrilateral shape functions... ");
-        shapeFunctionEvaluator.preEvaluate(ElementType_Parallelogram, defaultGLTableQuad.getAbscissas());
+        const auto preEvaluationPoints = getShapeFunctionEvaluationPointsForL2Error(ElementType_Parallelogram, *mesh, x_0);
+        shapeFunctionEvaluator.preEvaluate(ElementType_Parallelogram, preEvaluationPoints);
         timer.stop();
     }
     if (mesh->containsTriangle())
     {
         timer.start("Pre-evaluating triangle shape functions... ");
-        shapeFunctionEvaluator.preEvaluate(ElementType_Triangle, defaultGLTableTri.getAbscissas());
+        const auto preEvaluationPoints = getShapeFunctionEvaluationPointsForL2Error(ElementType_Triangle, *mesh, x_0);
+        shapeFunctionEvaluator.preEvaluate(ElementType_Triangle, preEvaluationPoints);
         timer.stop();
     }
 

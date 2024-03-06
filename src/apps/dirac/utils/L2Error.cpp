@@ -6,6 +6,21 @@
 
 namespace fem
 {
+namespace
+{
+const std::vector<Vector2mpq>& getAbscissas(ElementType elementType)
+{
+    if (elementType == ElementType_Parallelogram)
+    {
+        return defaultGLTableQuad.getAbscissas();
+    }
+    else
+    {
+        return defaultGLTableTri.getAbscissas();
+    }
+}
+} // namespace
+
 mpq_class computeSquaredL2ErrorOverElement(const FemContext& ctx,
                                            const VectorXmpq& coeffs,
                                            const BivariateFunction& exact,
@@ -27,5 +42,34 @@ mpq_class computeSquaredL2ErrorOverElement(const FemContext& ctx,
         res += integrateGaussLegendre(f, *elementPtr);
     }
     return res;
+}
+
+std::vector<Vector2mpq> getShapeFunctionEvaluationPointsForL2Error(ElementType elementType, const Mesh& mesh, const Vector2mpq& x_0)
+{
+    const std::vector<Vector2mpq>& abscissas = getAbscissas(elementType);
+    std::vector<Vector2mpq> points = abscissas;
+    for (int elementIdx = 0; elementIdx < mesh.getNumOfElements(); elementIdx++)
+    {
+        const Element& element = mesh.getElement(elementIdx);
+        if (element.getElementType() != elementType)
+        {
+            continue;
+        }
+        const auto subdivision = element.subdivide(x_0);
+        if (subdivision.size() == 1)
+        {
+            continue;
+        }
+        const AffineMap Finv = element.getReferenceElementMap().inverse();
+        for (const auto& subElement : subdivision)
+        {
+            const AffineMap G = subElement->getReferenceElementMap();
+            for (const auto& x : abscissas)
+            {
+                points.push_back(Finv(G(x)));
+            }
+        }
+    }
+    return points;
 }
 } // namespace fem
