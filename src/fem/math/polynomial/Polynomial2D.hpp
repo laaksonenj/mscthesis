@@ -45,7 +45,7 @@ private:
     void parsePolynomialString(const std::string& polynomialStr);
     void parseMonomialString(const std::string& monomialStr);
 
-    void addMonomial(Monomial2D monomial);
+    void addMonomial(const Monomial2D& monomial);
 
     void doAddition(const Polynomial2D& rhs);
     void doSubtraction(const Polynomial2D& rhs);

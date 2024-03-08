@@ -101,18 +101,20 @@ void Polynomial2D::parseMonomialString(const std::string& monomialStr)
     addMonomial(Monomial2D(coefficient, degreeOfX, degreeOfY));
 }
 
-void Polynomial2D::addMonomial(Monomial2D monomial)
+void Polynomial2D::addMonomial(const Monomial2D& monomial)
 {
     const DegreePair key = std::make_pair(monomial.degreeOfX, monomial.degreeOfY);
-    auto node = m_monomials.extract(key);
-    if (node)
+    if (!m_monomials.contains(key))
     {
-        const mpq_class& oldCoefficient = node.mapped().coefficient;
-        monomial.coefficient += oldCoefficient;
+        m_monomials.emplace(key, monomial);
     }
-    if (monomial.coefficient != 0)
+    else
     {
-        m_monomials.emplace(key, std::move(monomial));
+        m_monomials.at(key).coefficient += monomial.coefficient;
+    }
+    if (mpq_sgn(m_monomials.at(key).coefficient.get_mpq_t()) == 0)
+    {
+        m_monomials.erase(key);
     }
 }
 

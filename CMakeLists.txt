@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(MSVC)
-    add_compile_options(/bigobj)
+    add_compile_options(/MP /bigobj)
 endif()
 
 add_subdirectory(dependencies)
