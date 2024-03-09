@@ -104,15 +104,9 @@ void Polynomial2D::parseMonomialString(const std::string& monomialStr)
 void Polynomial2D::addMonomial(const Monomial2D& monomial)
 {
     const DegreePair key = std::make_pair(monomial.degreeOfX, monomial.degreeOfY);
-    if (!m_monomials.contains(key))
-    {
-        m_monomials.emplace(key, monomial);
-    }
-    else
-    {
-        m_monomials.at(key).coefficient += monomial.coefficient;
-    }
-    if (mpq_sgn(m_monomials.at(key).coefficient.get_mpq_t()) == 0)
+    auto [it, notUsed] = m_monomials.try_emplace(key, Monomial2D(mpq_class(0), monomial.degreeOfX, monomial.degreeOfY));
+    it->second.coefficient += monomial.coefficient;
+    if (mpq_sgn(it->second.coefficient.get_mpq_t()) == 0)
     {
         m_monomials.erase(key);
     }
