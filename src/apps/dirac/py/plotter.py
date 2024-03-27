@@ -70,7 +70,13 @@ C1_textbox = TextBox(
 )
 
 def thesis_bound_checkbutton_on_clicked(label):
-    line_thesis_bound.set_visible(not line_thesis_bound.get_visible())
+    if line_thesis_bound.get_visible():
+        line_thesis_bound.set_visible(False)
+        line_thesis_bound.set_label('_' + line_thesis_bound.get_label())
+    else:
+        line_thesis_bound.set_visible(True)
+        line_thesis_bound.set_label(line_thesis_bound.get_label()[1:])
+    ax.legend()
     fig.canvas.draw_idle()
 
 def C1_slider_on_changed(val):
@@ -133,7 +139,13 @@ k_textbox = TextBox(
 )
 
 def algebraic_bound_checkbutton_on_clicked(label):
-    line_algebraic_bound.set_visible(not line_algebraic_bound.get_visible())
+    if line_algebraic_bound.get_visible():
+        line_algebraic_bound.set_visible(False)
+        line_algebraic_bound.set_label('_' + line_algebraic_bound.get_label())
+    else:
+        line_algebraic_bound.set_visible(True)
+        line_algebraic_bound.set_label(line_algebraic_bound.get_label()[1:])
+    ax.legend()
     fig.canvas.draw_idle()
 
 def C2_slider_on_changed(val):
@@ -231,8 +243,6 @@ if args.mesh_file:
     if args.dirac_point:
         dirac_point_x = rational(args.dirac_point[0])
         dirac_point_y = rational(args.dirac_point[1])
-        print(dirac_point_x)
-        print(dirac_point_y)
         mesh_ax.plot(dirac_point_x, dirac_point_y, 'ro')
 
 ax.legend()
