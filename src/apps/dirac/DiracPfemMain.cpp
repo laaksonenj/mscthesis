@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     const uint32_t p_max = args.getValue<int>("p");
     const PolynomialSpaceType polynomialSpaceType = args.getValue<PolynomialSpaceType>("polynomial-space");
     const Vector2mpq x_0 = args.getValue<Vector2mpq>("dirac-point");
-    const fs::path outputFilepath = fs::path(args.getValue<std::string>("output-file"));
+    const fs::path outputDirpath = fs::path(args.getValue<std::string>("output-dir"));
     const LinearSolver::Method linearSolverMethod = args.getValue<LinearSolver::Method>("linear-solver");
 
     std::cout << "Arguments:" << std::endl;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     std::cout << "--p " << p_max << std::endl;
     std::cout << "--polynomial-space " << polynomialSpaceType << std::endl;
     std::cout << "--dirac-point " << x_0(0) << " " << x_0(1) << std::endl;
-    std::cout << "--output-file " << outputFilepath << std::endl;
+    std::cout << "--output-dir " << outputDirpath << std::endl;
     std::cout << "--linear-solver " << linearSolverMethodCliNames.at(linearSolverMethod) << std::endl;
     std::cout << std::endl;
 
@@ -46,26 +46,37 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
 
     Timer timer;
-    LinearSolver linearSolver(linearSolverMethod);
-
-    std::ofstream outputFile;
-    if (!outputFilepath.empty())
-    {
-        if (!outputFilepath.parent_path().empty())
-        {
-            fs::create_directories(outputFilepath.parent_path());
-        }
-        outputFile.open(outputFilepath);
-        if (!outputFile.is_open())
-        {
-            std::cout << "Failed to create output file " << outputFilepath << std::endl;
-            return 1;
-        }
-        outputFile << std::setprecision(16);
-    }
-
     const auto mesh = std::make_shared<Mesh>(createMeshFromFile(meshFilename));
     const FemContext ctx(mesh, p_max, polynomialSpaceType);
+    LinearSolver linearSolver(linearSolverMethod);
+
+    std::ofstream globalErrorOutputFile;
+    std::vector<std::ofstream> elementErrorOutputFiles(mesh->getNumOfElements());
+    if (!outputDirpath.empty())
+    {
+        fs::create_directories(outputDirpath);
+        const fs::path globalErrorFilepath = outputDirpath / "L2error.txt";
+        globalErrorOutputFile.open(globalErrorFilepath);
+        if (!globalErrorOutputFile.is_open())
+        {
+            std::cout << "Failed to create output file " << globalErrorFilepath  << std::endl;
+            return 1;
+        }
+        globalErrorOutputFile << std::setprecision(16);
+        for (int elementIdx = 0; elementIdx < mesh->getNumOfElements(); elementIdx++)
+        {
+            auto& ofs = elementErrorOutputFiles.at(elementIdx);
+            const std::string elementErrorFilename = "L2error_element" + std::to_string(elementIdx) + ".txt";
+            const fs::path elementErrorFilepath = outputDirpath / elementErrorFilename;
+            ofs.open(elementErrorFilepath);
+            if (!ofs.is_open())
+            {
+                std::cout << "Failed to create output file " << elementErrorFilepath  << std::endl;
+                return 1;
+            }
+            ofs << std::setprecision(16);
+        }
+    }
 
     ShapeFunctionFactory shapeFunctionFactory;
     if (mesh->containsQuadrilateral())
@@ -150,10 +161,11 @@ int main(int argc, char* argv[])
             timer.start("Computing L2 error over element " + std::to_string(elementIdx) + "... ");
             const mpq_class err = computeSquaredL2ErrorOverElement(subCtx, coeffs, exact, elementIdx, x_0, shapeFunctionEvaluator);
             timer.stop();
+            elementErrorOutputFiles.at(elementIdx) << p << " " << sqrt(mpf_class(err)) << std::endl;
             squaredL2error += err;
         }
         const mpf_class L2error = sqrt(mpf_class(squaredL2error));
-        outputFile << p << " " << L2error << std::endl;
+        globalErrorOutputFile << p << " " << L2error << std::endl;
         std::cout << "L2 error: " << L2error << std::endl;
         std::cout << "--------------------------------------------------------------" << std::endl;
     }

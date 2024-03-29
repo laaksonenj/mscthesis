@@ -26,7 +26,7 @@ Arguments::Arguments(int argc, char* argv[])
         ("boundary-function-idx", po::value<int>())
         ("element-idx", po::value<int>())
         ("local-side-idx", po::value<int>())
-        ("output-file", po::value<std::string>()->default_value(""))
+        ("output-dir", po::value<std::string>()->default_value(""))
         ("precision", po::value<int>()->default_value(64))
         ("linear-solver", po::value<std::string>()->default_value("ldlt"))
         ;
@@ -183,15 +183,15 @@ Arguments::Arguments(int argc, char* argv[])
         }
     });
 
-    m_optionParsers.emplace("output-file", [](const po::variables_map& vm)
+    m_optionParsers.emplace("output-dir", [](const po::variables_map& vm)
     {
-        if (vm.count("output-file"))
+        if (vm.count("output-dir"))
         {
-            return std::any(vm["output-file"].as<std::string>());
+            return std::any(vm["output-dir"].as<std::string>());
         }
         else
         {
-            ARGUMENT_MISSING("output-file");
+            ARGUMENT_MISSING("output-dir");
         }
     });
 
