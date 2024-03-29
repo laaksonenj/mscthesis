@@ -12,6 +12,7 @@ class LinearSolver
 public:
     enum Method
     {
+        FullPivLU,
         PartialPivLU,
         ColPivHouseholderQR,
         LLT,
@@ -35,6 +36,8 @@ inline const std::map<LinearSolver::Method, std::string> linearSolverMethodCliNa
     {LinearSolver::ColPivHouseholderQR, "col-piv-householder-qr"},
     {LinearSolver::LLT, "llt"},
     {LinearSolver::LDLT, "ldlt"},
-    {LinearSolver::BDCSVD, "bdcsvd"}
+    {LinearSolver::BDCSVD, "bdcsvd"},
+    {LinearSolver::FullPivLU, "full-piv-lu"}
+
 };
 } // namespace fem

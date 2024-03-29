@@ -50,6 +50,11 @@ VectorXmpq LinearSolver::solve(const MatrixXmpq& A, const VectorXmpq& b)
         const Eigen::VectorXd x_d = A_d.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b_d);
         res = x_d.cast<mpq_class>();
     }
+    else if (m_method == FullPivLU)
+    {
+        const Eigen::VectorXd x_d = A_d.fullPivLu().solve(b_d);
+        res = x_d.cast<mpq_class>();
+    }
     else
     {
         assert(false && "Unknown method");
