@@ -22,9 +22,9 @@ assert not args.dirac_point or len(args.dirac_point) == 2
 
 max_p = max([np.shape(arr)[0] for arr in plot_data])
 
-# C1 * sqrt(log(p + 1)) / p
+# C1 * p^(-1) * (sqrt(log(p + 1)) + 1)
 def thesis_bound(t, C1):
-    return C1 * np.sqrt(np.log(t + 1)) / t
+    return C1 * (1 / t) * (np.sqrt(np.log(t + 1)) + 1)
 
 # C2 * p^(-k)
 def algebraic_bound(t, C2, k):
@@ -39,7 +39,7 @@ init_C2 = 0.05
 init_k = 1
 
 t = np.linspace(0.9, max_p + 1, 100)
-line_thesis_bound, = ax.plot(t, thesis_bound(t, init_C1), label=r'$C_1 \sqrt{\log (p + 1)} / p$')
+line_thesis_bound, = ax.plot(t, thesis_bound(t, init_C1), label=r'$C_1 p^{-1} ( \sqrt{\log (p + 1)} + 1 )$')
 line_algebraic_bound, = ax.plot(t, algebraic_bound(t, init_C2, init_k), label=r'$C_2 p^{-k}$')
 
 # Controls for thesis_bound
