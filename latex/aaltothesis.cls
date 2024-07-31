@@ -1092,7 +1092,7 @@
 	 \noindent% First position the title
 	 \parbox[t]{\textwidth-\coverpageindent}{%
 	  \raggedright%
-	  {\Huge\selectfont\th@sistitl@}\par% title
+	  {\Huge\selectfont\th@sistitl@\vphantom{$L^2$}}\par% title
 	   \ifdefvoid{\th@sissubtitl@}{}{% subtitle is specified
 		 \vspace{1.5\baselineskip}%
 	  	 \large\selectfont\th@sissubtitl@}% subtitle
